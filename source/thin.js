@@ -4,8 +4,18 @@ $(function () {
         // 标签切换
         $("tab-nav", this.parentElement).removeClass("active");
         $(this).addClass("active");
-
-        //多视图
+        var fun = this.getAttribute("function");
+        
+        // 调用标签函数
+        if (fun === null) {
+            //console.log("no function");
+        } else if (Object.prototype.toString.call(window[fun]) === '[object Function]') {
+            window[fun]();
+        } else {
+            //console.log(Object.prototype.toString.call(window[fun]));
+        }
+        
+        // 视图切换
         var view = this.getAttribute("view");
         if (view !== null) {
             var mv = $(this).parents("multiview");
@@ -13,18 +23,7 @@ $(function () {
             $("view", mv).removeClass("active");
             $("view#" + view, mv).addClass("active");
         }
-
-        var fun = this.getAttribute("function");
-        if (fun === null) {
-            //console.log("no function");
-        } else if (Object.prototype.toString.call(window[fun]) === '[object Function]') {
-            window[fun]();
-        } else {
-            console.log(Object.prototype.toString.call(window[fun]));
-        }
     });
-
-
 });
 
 $.fn.extend({
@@ -219,7 +218,8 @@ $.fn.extend({
                     element.onclick = function () {
                         //console.log("click");
                         var data_container = nearest_datacontainer(this);
-                        var new_data = new Object;
+                        var new_data = {};
+                        
                         //获取全部input的值：
                         $("input", data_container).each(function (i, e) {
                             var name = this.attributes["name"].value;
@@ -230,23 +230,7 @@ $.fn.extend({
                             var name = this.attributes["name"].value;
                             new_data[name] = $(this).val();
                         });
-
-                        //$(element).click(function () {
-                        //    var data_container = nearest_datacontainer(this);
-                        //    var new_data = new Object;
-                        //    //获取全部input的值：
-                        //    $("input", data_container).each(function (i, e) {
-                        //        var name = this.attributes["name"].value;
-                        //        new_data[name] = $(this).val();
-                        //    });
-                        //    //获取全部select的值：
-                        //    $("select", data_container).each(function (i, e) {
-                        //        var name = this.attributes["name"].value;
-                        //        new_data[name] = $(this).val();
-                        //    });
-
-
-
+                        
                         //console.log(new_data);
                         p.template.click({
                             sender: this,
@@ -289,20 +273,6 @@ $.fn.extend({
                         });
                     });
                 }
-
-
-                //
-                //  before 调用before自定义渲染器
-                // 
-                //if (p.template.before !== undefined) {
-                //    p.template.before({
-                //        template: p.template,
-                //        container: element,
-                //        data: data
-                //    });
-                //}
-
-
 
                 // t 渲染节点的内容
 
@@ -360,18 +330,6 @@ $.fn.extend({
                     });
                 }
 
-
-
-                //* after 调用after自定义渲染器
-
-                //if (p.template.after !== undefined) {
-                //    p.template.after({
-                //        template: p.template,
-                //        container: element,
-                //        data: data
-                //    });
-                //}
-
             }
 
         }
@@ -418,9 +376,6 @@ $.fn.extend({
             });
             return result;
         }
-
-
-
 
         //
         // 查找最近的数据容器
@@ -471,9 +426,7 @@ $.fn.extend({
             return dp;
         }
 
-        /* 
-         * 判断一个对象是否dom element;
-         */
+        //        * 判断一个对象是否dom element;
         function isDOMElement(obj) {
             return !!(obj && typeof window !== 'undefined' && (obj === window || obj.nodeType));
         }
@@ -483,10 +436,6 @@ $.fn.extend({
 
 function poplayer(p) {
 
-    // 查找当前页面的最大z-index;
-    //var arr = [...document.all].map(e => +window.getComputedStyle(e).zIndex || 0);
-    //var maxz = arr.length ? Math.max(...arr) : 0;
-    //console.log({ maxz: maxz });
     //蒙版层
     var popmask = document.createElement("popmask");
     popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.6);overflow:hidden;";
