@@ -1,4 +1,4 @@
-# dmt_render.js
+# thin.js
 
 ## 1. render
 ### 1.1 用法
