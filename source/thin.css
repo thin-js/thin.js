@@ -1,0 +1,37 @@
+/* tab栏切换容器 */
+tab {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #81c5ba;
+    display: block;
+}
+/* tab切换按钮 */
+tab-nav {
+    height: 30px;
+    width: 85px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-bottom: 0px solid #81c5ba;
+    display: inline-block;
+}
+
+    tab-nav.active {
+        background-color: #81c5ba;
+        color: #fff;
+        border: 1px solid #81c5ba;
+    }
+
+multiview {
+    display: block;
+    position: relative;
+}
+
+view {
+    display: none;
+}
+
+    view.active {
+        display: block;
+    }
