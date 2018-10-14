@@ -5,6 +5,7 @@ tab {
     border-bottom: 1px solid #81c5ba;
     display: block;
 }
+
 /* tab切换按钮 */
 tab-nav {
     height: 30px;
@@ -17,11 +18,11 @@ tab-nav {
     display: inline-block;
 }
 
-    tab-nav.active {
-        background-color: #81c5ba;
-        color: #fff;
-        border: 1px solid #81c5ba;
-    }
+tab-nav.active {
+    background-color: #81c5ba;
+    color: #fff;
+    border: 1px solid #81c5ba;
+}
 
 multiview {
     display: block;
@@ -32,6 +33,6 @@ view {
     display: none;
 }
 
-    view.active {
-        display: block;
-    }
+view.active {
+    display: block;
+}

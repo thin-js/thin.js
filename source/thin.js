@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/ 
+*/
 
 $(function () {
     $(document).on("click", "tab-nav", function () {
@@ -22,7 +22,7 @@ $(function () {
         $("tab-nav", this.parentElement).removeClass("active");
         $(this).addClass("active");
         var fun = this.getAttribute("function");
-        
+
         // 调用标签函数
         if (fun === null) {
             //console.log("no function");
@@ -31,7 +31,7 @@ $(function () {
         } else {
             //console.log(Object.prototype.toString.call(window[fun]));
         }
-        
+
         // 视图切换
         var view = this.getAttribute("view");
         if (view !== null) {
@@ -45,7 +45,7 @@ $(function () {
 
 $.fn.extend({
 
-  render: function (p) {
+    render: function (p) {
         //console.log({ function: "render_main", p: p });
         //this[0].data_of_thin = p.data; //将数据附加到容器。
 
@@ -61,8 +61,7 @@ $.fn.extend({
                 template: p.template,
                 data: p.data
             });
-        }
-        else {
+        } else {
             this[0].data_of_thin = p.data; //将数据附加到容器。
             render_by_data({
                 container: this[0],
@@ -113,7 +112,7 @@ $.fn.extend({
                         template: p.template[ti],
                         container: p.container,
                         data: p.data
-                    });                      //逐条调用渲染器。
+                    }); //逐条调用渲染器。
                 }
             } else {
                 //console.log("template is not array");
@@ -122,7 +121,7 @@ $.fn.extend({
                     template: p.template,
                     container: p.container,
                     data: p.data
-                });                      //逐条调用渲染器。
+                }); //逐条调用渲染器。
             }
         }
 
@@ -172,7 +171,10 @@ $.fn.extend({
 
             if (p.template.datapath !== undefined && p.data === undefined) {
                 //console.log({ function: "datapath find", p: p });
-                var data = datarover({ container: p.container, path: p.template.datapath });
+                var data = datarover({
+                    container: p.container,
+                    path: p.template.datapath
+                });
                 //console.log(data);
                 if (data !== null) {
                     render_by_data({
@@ -221,7 +223,10 @@ $.fn.extend({
                 }
                 // 设置选中值
                 if (p.template.selected !== undefined) {
-                    var selected_value = render_content({ template: p.template.selected, container: element });
+                    var selected_value = render_content({
+                        template: p.template.selected,
+                        container: element
+                    });
                     $(element).val(selected_value);
                 }
 
@@ -236,7 +241,7 @@ $.fn.extend({
                         //console.log("click");
                         var data_container = nearest_datacontainer(this);
                         var new_data = {};
-                        
+
                         //获取全部input的值：
                         $("input", data_container).each(function (i, e) {
                             var name = this.attributes["name"].value;
@@ -247,7 +252,7 @@ $.fn.extend({
                             var name = this.attributes["name"].value;
                             new_data[name] = $(this).val();
                         });
-                        
+
                         //console.log(new_data);
                         p.template.click({
                             sender: this,
@@ -311,8 +316,7 @@ $.fn.extend({
                                 container: element,
                                 data: data_container.data_of_thin
                             }));
-                        }
-                        else {
+                        } else {
                             element.setAttribute(key, render_content({
                                 template: p.template.a[key],
                                 container: element
@@ -333,8 +337,7 @@ $.fn.extend({
                                 container: element,
                                 data: data_container.data_of_thin
                             }));
-                        }
-                        else {
+                        } else {
                             element.style.setProperty(key, render_content({
                                 template: p.template.style[key],
                                 container: element
@@ -354,7 +357,7 @@ $.fn.extend({
             //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
             var reg = /\[\[[a-zA-Z0-9\./_]*\]\]/gi;
-            var result = t.replace(reg, function (m) {     //使用正则表达式匹配变量名
+            var result = t.replace(reg, function (m) { //使用正则表达式匹配变量名
                 //逐个匹配项处理；
                 var path = m.replace("[[", "").replace("]]", "");
                 var patharray = path.split("/");
@@ -363,12 +366,12 @@ $.fn.extend({
                 for (var i = 0; i < patharray.length; i++) {
                     if (patharray[i] === "..") {
                         if (isDOMElement(data_container)) {
-                            data_container = nearest_datacontainer(data_container.parentNode);  //上溯节点
+                            data_container = nearest_datacontainer(data_container.parentNode); //上溯节点
                         } else {
                             return m;
                         }
                     } else {
-                        if (isDOMElement(data_container)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                        if (isDOMElement(data_container)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
                             if (data_container.data_of_thin === undefined) {
                                 return m;
                             } else {
@@ -405,18 +408,18 @@ $.fn.extend({
         //    p.container { HTMLElement } 数据容器
         // @return { any } 返回查找到的数据数据
         function datarover(p) {
-            var pa = p.path.split("/");                     //路径数组
-            var dp = nearest_datacontainer(p.container);    //找到最近数据容器
+            var pa = p.path.split("/"); //路径数组
+            var dp = nearest_datacontainer(p.container); //找到最近数据容器
 
             for (var i = 0; i < pa.length; i++) {
                 if (pa[i] === "..") {
                     if (isDOMElement(dp)) {
-                        dp = nearest_datacontainer(dp.parentNode);  //上溯到上一个数据容器节
+                        dp = nearest_datacontainer(dp.parentNode); //上溯到上一个数据容器节
                     } else {
                         return null;
                     }
                 } else {
-                    if (isDOMElement(dp)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                    if (isDOMElement(dp)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
                         if (dp.data_of_thin === undefined) {
                             return null;
                         } else {
@@ -496,7 +499,9 @@ function poplayer(p) {
     document.body.appendChild(popmask);
 
     if (p.render !== undefined) {
-        p.render({ container: popcontainer });
+        p.render({
+            container: popcontainer
+        });
     } else {
         $(popcontainer).render({
             data: p.data,
