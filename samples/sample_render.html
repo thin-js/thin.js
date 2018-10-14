@@ -1,4 +1,26 @@
+<!DOCTYPE html>
 <html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="../source/thin.js"></script>
+</head>
+
 <body>
+    <div id="container"></div>
+
+    <script>
+        $("div#container").render({
+            data: {
+                lib:"thin.js",
+                author: "eprom2006"
+            },
+            template: {
+                e: "div",
+                t: "lib: [[lib]],author: [[author]]"
+            }
+        });
+    </script>
 </body>
+
 </html>

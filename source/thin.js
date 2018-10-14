@@ -1,4 +1,6 @@
-/*  thin.js - a light-weight web front-end framework, (c)2018 Li Wei
+/*  thin.js - a light-weight web front-end framework,
+    
+    Copyright (C)2018, Li Wei
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,7 +47,7 @@ $.fn.extend({
 
   render: function (p) {
         //console.log({ function: "render_main", p: p });
-        //this[0].dmt_render_data = p.data; //将数据附加到容器。
+        //this[0].data_of_thin = p.data; //将数据附加到容器。
 
         if (Object.prototype.toString.call(p.template) === '[object Array]') {
             render_by_data({
@@ -61,7 +63,7 @@ $.fn.extend({
             });
         }
         else {
-            this[0].dmt_render_data = p.data; //将数据附加到容器。
+            this[0].data_of_thin = p.data; //将数据附加到容器。
             render_by_data({
                 container: this[0],
                 template: p.template
@@ -140,7 +142,7 @@ $.fn.extend({
                 //console.log(e.childNodes.length);
                 p.container.appendChild(e);
                 //for (var ci = 0; ci < e.cloneNode.length; ci++) {
-                //    e.childNodes[ci].dmt_render_data = p.data;
+                //    e.childNodes[ci].data_of_thin = p.data;
                 //}
             } else if (Object.prototype.toString.call(p.template) === '[object Object]') {
                 //模板是对象的场景
@@ -155,7 +157,7 @@ $.fn.extend({
                 p.template({
                     container: p.container,
                     //template: p.template,
-                    data: datacontainer.dmt_render_data
+                    data: datacontainer.data_of_thin
                 });
             } else {
                 // 不支持的场景。
@@ -194,7 +196,7 @@ $.fn.extend({
                 $(p.container).append(element);
 
                 if (p.data !== undefined) {
-                    element.dmt_render_data = p.data; //数据附着到当前节点。
+                    element.data_of_thin = p.data; //数据附着到当前节点。
                 }
 
                 if (p.template.name !== undefined) {
@@ -249,7 +251,7 @@ $.fn.extend({
                         //console.log(new_data);
                         p.template.click({
                             sender: this,
-                            org_data: data_container.dmt_render_data,
+                            org_data: data_container.data_of_thin,
                             new_data: new_data
                         });
                     };
@@ -282,7 +284,7 @@ $.fn.extend({
                                 sender: this,
                                 type: eventtype,
                                 event: e,
-                                org_data: data_container.dmt_render_data,
+                                org_data: data_container.data_of_thin,
                                 new_data: new_data
                             });
                         });
@@ -290,8 +292,6 @@ $.fn.extend({
                 }
 
                 // t 渲染节点的内容
-
-
                 if (p.template.t !== undefined) {
 
                     //console.log({ function: "render t", p: p });
@@ -301,7 +301,7 @@ $.fn.extend({
                     });
                 }
 
-                //a 指定节点的attribute
+                //a 设置节点attribute
                 if (p.template.a !== undefined) {
                     Object.keys(p.template.a).forEach(function (key) {
                         //e.setAttribute(key, template.a[key]);
@@ -309,7 +309,7 @@ $.fn.extend({
                             var data_container = nearest_datacontainer(element);
                             element.setAttribute(key, p.template.a[key]({
                                 container: element,
-                                data: data_container.dmt_render_data
+                                data: data_container.data_of_thin
                             }));
                         }
                         else {
@@ -323,7 +323,7 @@ $.fn.extend({
                     });
                 }
 
-                //style 指定节点的style
+                //style 设置节点样式
                 if (p.template.style !== undefined) {
                     Object.keys(p.template.style).forEach(function (key) {
                         //e.setAttribute(key, template.a[key]);
@@ -331,7 +331,7 @@ $.fn.extend({
                             var data_container = nearest_datacontainer(element);
                             element.style.setProperty(key, p.template.style[key]({
                                 container: element,
-                                data: data_container.dmt_render_data
+                                data: data_container.data_of_thin
                             }));
                         }
                         else {
@@ -340,13 +340,9 @@ $.fn.extend({
                                 container: element
                             }));
                         }
-
-
                     });
                 }
-
             }
-
         }
 
 
@@ -355,7 +351,7 @@ $.fn.extend({
         //
         function render_content(p) {
             var t = p.template;
-            //var data = nearest_datacontainer( p.container.dmt_render_data);
+            //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
             var reg = /\[\[[a-zA-Z0-9\./_]*\]\]/gi;
             var result = t.replace(reg, function (m) {     //使用正则表达式匹配变量名
@@ -373,10 +369,10 @@ $.fn.extend({
                         }
                     } else {
                         if (isDOMElement(data_container)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
-                            if (data_container.dmt_render_data === undefined) {
+                            if (data_container.data_of_thin === undefined) {
                                 return m;
                             } else {
-                                data_container = data_container.dmt_render_data;
+                                data_container = data_container.data_of_thin;
                             }
                         }
                         if (data_container === null) {
@@ -396,7 +392,7 @@ $.fn.extend({
         // 查找最近的数据容器
         //
         function nearest_datacontainer(container) {
-            while (!container.hasOwnProperty("dmt_render_data")) {
+            while (!container.hasOwnProperty("data_of_thin")) {
                 if (container.parentNode === null) return null;
                 container = container.parentNode;
             }
@@ -421,10 +417,10 @@ $.fn.extend({
                     }
                 } else {
                     if (isDOMElement(dp)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
-                        if (dp.dmt_render_data === undefined) {
+                        if (dp.data_of_thin === undefined) {
                             return null;
                         } else {
-                            dp = dp.dmt_render_data;
+                            dp = dp.data_of_thin;
                         }
                     }
                     if (dp === null) {
@@ -435,13 +431,12 @@ $.fn.extend({
                     } else {
                         return null;
                     }
-
                 }
             }
             return dp;
         }
 
-        //        * 判断一个对象是否dom element;
+        // 判断一个对象是否dom element;
         function isDOMElement(obj) {
             return !!(obj && typeof window !== 'undefined' && (obj === window || obj.nodeType));
         }
@@ -508,5 +503,4 @@ function poplayer(p) {
             template: p.template
         });
     }
-
 }
