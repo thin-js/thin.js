@@ -1,4 +1,6 @@
-/*  thin.js - a light-weight web front-end framework, (c)2018 Li Wei
+/*  thin.js - a light-weight web front-end framework,
+    
+    Copyright (C)2018, Li Wei
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -290,8 +292,6 @@ $.fn.extend({
                 }
 
                 // t 渲染节点的内容
-
-
                 if (p.template.t !== undefined) {
 
                     //console.log({ function: "render t", p: p });
@@ -301,7 +301,7 @@ $.fn.extend({
                     });
                 }
 
-                //a 指定节点的attribute
+                //a 设置节点attribute
                 if (p.template.a !== undefined) {
                     Object.keys(p.template.a).forEach(function (key) {
                         //e.setAttribute(key, template.a[key]);
@@ -323,7 +323,7 @@ $.fn.extend({
                     });
                 }
 
-                //style 指定节点的style
+                //style 设置节点样式
                 if (p.template.style !== undefined) {
                     Object.keys(p.template.style).forEach(function (key) {
                         //e.setAttribute(key, template.a[key]);
@@ -340,13 +340,9 @@ $.fn.extend({
                                 container: element
                             }));
                         }
-
-
                     });
                 }
-
             }
-
         }
 
 
@@ -435,13 +431,12 @@ $.fn.extend({
                     } else {
                         return null;
                     }
-
                 }
             }
             return dp;
         }
 
-        //        * 判断一个对象是否dom element;
+        // 判断一个对象是否dom element;
         function isDOMElement(obj) {
             return !!(obj && typeof window !== 'undefined' && (obj === window || obj.nodeType));
         }
@@ -508,5 +503,4 @@ function poplayer(p) {
             template: p.template
         });
     }
-
 }
