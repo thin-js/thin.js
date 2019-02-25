@@ -1,4 +1,4 @@
-/*  thin.js - a light-weight web front-end framework,
+﻿/*  thin.js - a light-weight web front-end framework,
     
     Copyright (C)2018, Li Wei
 
@@ -34,8 +34,9 @@ $(function () {
 
         // 视图切换
         var view = this.getAttribute("view");
+        //console.log(this);
         if (view !== null) {
-            var mv = $(this).parents("multiview");
+            var mv = $(this).parents("multiview:first");
             //console.log(mv);
             $("view", mv).removeClass("active");
             $("view#" + view, mv).addClass("active");
@@ -49,6 +50,10 @@ $.fn.extend({
         //console.log({ function: "render_main", p: p });
         //this[0].data_of_thin = p.data; //将数据附加到容器。
 
+        if (p.data === undefined) {
+            p.data = {};
+        }
+
         if (Object.prototype.toString.call(p.template) === '[object Array]') {
             render_by_data({
                 container: this[0],
@@ -56,6 +61,14 @@ $.fn.extend({
                 data: p.data
             });
         } else if (Object.prototype.toString.call(p.data) === '[object Array]') {
+            render_by_data({
+                container: this[0],
+                template: p.template,
+                data: p.data
+            });
+        }
+        else if (Object.prototype.toString.call(p.template) === '[object Object]') {
+            //this[0].data_of_thin = p.data; //将数据附加到容器。
             render_by_data({
                 container: this[0],
                 template: p.template,
@@ -112,7 +125,7 @@ $.fn.extend({
                         template: p.template[ti],
                         container: p.container,
                         data: p.data
-                    }); //逐条调用渲染器。
+                    });                      //逐条调用渲染器。
                 }
             } else {
                 //console.log("template is not array");
@@ -121,7 +134,7 @@ $.fn.extend({
                     template: p.template,
                     container: p.container,
                     data: p.data
-                }); //逐条调用渲染器。
+                });                      //逐条调用渲染器。
             }
         }
 
@@ -171,10 +184,7 @@ $.fn.extend({
 
             if (p.template.datapath !== undefined && p.data === undefined) {
                 //console.log({ function: "datapath find", p: p });
-                var data = datarover({
-                    container: p.container,
-                    path: p.template.datapath
-                });
+                var data = datarover({ container: p.container, path: p.template.datapath });
                 //console.log(data);
                 if (data !== null) {
                     render_by_data({
@@ -223,10 +233,7 @@ $.fn.extend({
                 }
                 // 设置选中值
                 if (p.template.selected !== undefined) {
-                    var selected_value = render_content({
-                        template: p.template.selected,
-                        container: element
-                    });
+                    var selected_value = render_content({ template: p.template.selected, container: element });
                     $(element).val(selected_value);
                 }
 
@@ -241,18 +248,31 @@ $.fn.extend({
                         //console.log("click");
                         var data_container = nearest_datacontainer(this);
                         var new_data = {};
+                        if (data_container !== null) {
 
-                        //获取全部input的值：
-                        $("input", data_container).each(function (i, e) {
-                            var name = this.attributes["name"].value;
-                            new_data[name] = $(this).val();
-                        });
-                        //获取全部select的值：
-                        $("select", data_container).each(function (i, e) {
-                            var name = this.attributes["name"].value;
-                            new_data[name] = $(this).val();
-                        });
+                            //获取全部input的值：
+                            $("input", data_container).each(function (i, e) {
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
 
+                            });
+                            //获取全部select的值：
+                            $("select", data_container).each(function (i, e) {
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
+                            });
+                            //获取全部textarea的值：
+                            $("textarea", data_container).each(function (i, e) {
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
+                            });
+                        }
                         //console.log(new_data);
                         p.template.click({
                             sender: this,
@@ -275,13 +295,17 @@ $.fn.extend({
                             var new_data = new Object;
                             //获取全部input的值：
                             $("input", data_container).each(function (i, e) {
-                                var name = this.attributes["name"].value;
-                                new_data[name] = $(this).val();
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
                             });
                             //获取全部select的值：
                             $("select", data_container).each(function (i, e) {
-                                var name = this.attributes["name"].value;
-                                new_data[name] = $(this).val();
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
                             });
 
                             var eventtype = e.type;
@@ -316,7 +340,8 @@ $.fn.extend({
                                 container: element,
                                 data: data_container.data_of_thin
                             }));
-                        } else {
+                        }
+                        else {
                             element.setAttribute(key, render_content({
                                 template: p.template.a[key],
                                 container: element
@@ -337,7 +362,8 @@ $.fn.extend({
                                 container: element,
                                 data: data_container.data_of_thin
                             }));
-                        } else {
+                        }
+                        else {
                             element.style.setProperty(key, render_content({
                                 template: p.template.style[key],
                                 container: element
@@ -357,7 +383,7 @@ $.fn.extend({
             //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
             var reg = /\[\[[a-zA-Z0-9\./_]*\]\]/gi;
-            var result = t.replace(reg, function (m) { //使用正则表达式匹配变量名
+            var result = t.replace(reg, function (m) {     //使用正则表达式匹配变量名
                 //逐个匹配项处理；
                 var path = m.replace("[[", "").replace("]]", "");
                 var patharray = path.split("/");
@@ -366,12 +392,12 @@ $.fn.extend({
                 for (var i = 0; i < patharray.length; i++) {
                     if (patharray[i] === "..") {
                         if (isDOMElement(data_container)) {
-                            data_container = nearest_datacontainer(data_container.parentNode); //上溯节点
+                            data_container = nearest_datacontainer(data_container.parentNode);  //上溯节点
                         } else {
                             return m;
                         }
                     } else {
-                        if (isDOMElement(data_container)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                        if (isDOMElement(data_container)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
                             if (data_container.data_of_thin === undefined) {
                                 return m;
                             } else {
@@ -380,13 +406,17 @@ $.fn.extend({
                         }
                         if (data_container === null) {
                             return null;
+                            //return "";
                         } else {
                             data_container = data_container[patharray[i]];
                         }
-
                     }
                 }
-                return data_container;
+                if (data_container === null || data_container === undefined) {
+                    return "";
+                } else {
+                    return data_container;
+                }
             });
             return result;
         }
@@ -408,18 +438,18 @@ $.fn.extend({
         //    p.container { HTMLElement } 数据容器
         // @return { any } 返回查找到的数据数据
         function datarover(p) {
-            var pa = p.path.split("/"); //路径数组
-            var dp = nearest_datacontainer(p.container); //找到最近数据容器
+            var pa = p.path.split("/");                     //路径数组
+            var dp = nearest_datacontainer(p.container);    //找到最近数据容器
 
             for (var i = 0; i < pa.length; i++) {
                 if (pa[i] === "..") {
                     if (isDOMElement(dp)) {
-                        dp = nearest_datacontainer(dp.parentNode); //上溯到上一个数据容器节
+                        dp = nearest_datacontainer(dp.parentNode);  //上溯到上一个数据容器节
                     } else {
                         return null;
                     }
                 } else {
-                    if (isDOMElement(dp)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                    if (isDOMElement(dp)) {  //如果dp是文档节点，则从文档节点中取其包含数据为dp。
                         if (dp.data_of_thin === undefined) {
                             return null;
                         } else {
@@ -446,12 +476,11 @@ $.fn.extend({
     }
 });
 
-
+//弹窗
 function poplayer(p) {
-
     //蒙版层
     var popmask = document.createElement("popmask");
-    popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.6);overflow:hidden;";
+    popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.4);overflow:hidden;";
     //popmask.style.zIndex = maxz + 1; //设置弹出层的zIndax为maxz+1；
     popmask.style.zIndex = 1000;
 
@@ -461,13 +490,14 @@ function poplayer(p) {
     if (p.width !== undefined) {
         modaldialog.style.width = p.width;
     }
-    if (p.height !== undefined) {
-        modaldialog.style.height = p.height;
-    }
+    //if (p.height !== undefined) {
+    //    modaldialog.style.height = p.height;
+    //}
     popmask.appendChild(modaldialog);
     //弹出框-标题
+    var header;
     if (p.header !== undefined) {
-        var header = document.createElement("popheader");
+        header = document.createElement("popheader");
         header.style = "display:block;background-color: #81c5ba;padding:0 10px;color:#fff;position:relative;height:50px;line-height:50px;vertical-align:middle;font-size:16px;font-weight:bold;";
         $(header).html(p.header);
         var closeicon = document.createElement("span");
@@ -491,21 +521,89 @@ function poplayer(p) {
         };
         header.appendChild(closeicon);
         modaldialog.appendChild(header);
+
     }
     //弹出框-内容
     var popcontainer = document.createElement("popbody");
     popcontainer.style = "display:block;padding:5px 10px;";
+    //console.log(p.height);
+    if (p.height !== undefined) {
+        popcontainer.style.height = p.height;
+        popcontainer.style.overflowY = "scroll";
+    } else {
+        popcontainer.style.maxHeight = "600px";
+        popcontainer.style.overflowY = "scroll";
+    }
     modaldialog.appendChild(popcontainer);
     document.body.appendChild(popmask);
 
     if (p.render !== undefined) {
-        p.render({
-            container: popcontainer
-        });
+        p.render({ container: popcontainer });
     } else {
         $(popcontainer).render({
             data: p.data,
             template: p.template
         });
     }
-}
+    //绑定拖拽
+    popDrag(header, modaldialog);
+};
+
+//拖拽函数
+var popDrag = function (bar, target, callback) {
+    //拖动事件参数对象
+    var popDragParams = {
+        left: 0,
+        top: 0,
+        currentX: 0,
+        currentY: 0,
+        flag: false,
+        resetPosition: function () {
+            //console.log(this);
+            var target_style_left = $(target).css("left");
+            var target_style_top = $(target).css("top");
+            if (target_style_left !== "auto") {
+                this.left = target_style_left;
+            }
+            if (target_style_top !== "auto") {
+                this.top = target_style_top;
+            }
+        }
+    };
+    popDragParams.resetPosition();
+    bar.onmousedown = function (event) {
+        popDragParams.flag = true;
+        if (!event) {
+            event = window.event;
+            //防止IE文字选中
+            bar.onselectstart = function () {
+                return false;
+            };
+        }
+        var e = event;
+        popDragParams.currentX = e.clientX;
+        popDragParams.currentY = e.clientY;
+    };
+    document.onmouseup = function () {
+        popDragParams.flag = false;
+        popDragParams.resetPosition();
+    };
+    document.onmousemove = function (event) {
+        var e = event ? event : window.event;
+        if (popDragParams.flag) {
+            var nowX = e.clientX, nowY = e.clientY;
+            var disX = nowX - popDragParams.currentX, disY = nowY - popDragParams.currentY;
+            target.style.left = parseInt(popDragParams.left) + disX + "px";
+            target.style.top = parseInt(popDragParams.top) + disY + "px";
+
+            if (typeof callback == "function") {
+                callback((parseInt(popDragParams.left) || 0) + disX, (parseInt(popDragParams.top) || 0) + disY);
+            }
+
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+            return false;
+        }
+    };
+};
