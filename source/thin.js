@@ -1,4 +1,4 @@
-﻿/*  thin.js - a light-weight web front-end framework,
+/*  thin.js - a light-weight web front-end framework,
     
     Copyright (C)2018, Li Wei
 
@@ -382,7 +382,7 @@ $.fn.extend({
             var t = p.template;
             //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
-            var reg = /\[\[[a-zA-Z0-9\./_]*\]\]/gi;
+            var reg = /\[\[[a-zA-Z0-9\-\./_]*\]\]/gi;
             var result = t.replace(reg, function (m) {     //使用正则表达式匹配变量名
                 //逐个匹配项处理；
                 var path = m.replace("[[", "").replace("]]", "");
@@ -486,7 +486,7 @@ function poplayer(p) {
 
     //弹出框
     var modaldialog = document.createElement("popdialog");
-    modaldialog.style = "display:block;width:40%;position:relative;margin:10% auto 0;border-radius:4px;background:#fff;line-height:24px;overflow:hidden;";
+    //modaldialog.style = "display:block;width:40%;position:relative;margin:10% auto 0;border-radius:4px;background:#fff;line-height:24px;overflow:hidden;";
     if (p.width !== undefined) {
         modaldialog.style.width = p.width;
     }
@@ -498,7 +498,7 @@ function poplayer(p) {
     var header;
     if (p.header !== undefined) {
         header = document.createElement("popheader");
-        header.style = "display:block;background-color: #81c5ba;padding:0 10px;color:#fff;position:relative;height:50px;line-height:50px;vertical-align:middle;font-size:16px;font-weight:bold;";
+        // header.style = "display:block;background-color: #81c5ba;padding:0 10px;color:#fff;position:relative;height:50px;line-height:50px;vertical-align:middle;font-size:16px;font-weight:bold;";
         $(header).html(p.header);
         var closeicon = document.createElement("span");
         closeicon.innerText = "✕";
