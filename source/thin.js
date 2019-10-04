@@ -1,17 +1,14 @@
-/*  thin.js - a light-weight web front-end framework,
+﻿/*  thin.js - a light-weight web front-end framework,
     
     Copyright (C)2018, Li Wei
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -480,7 +477,7 @@ $.fn.extend({
 function poplayer(p) {
     //蒙版层
     var popmask = document.createElement("popmask");
-    popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.4);overflow:hidden;";
+    //popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.4);overflow:hidden;";
     //popmask.style.zIndex = maxz + 1; //设置弹出层的zIndax为maxz+1；
     popmask.style.zIndex = 1000;
 
@@ -500,9 +497,9 @@ function poplayer(p) {
         header = document.createElement("popheader");
         // header.style = "display:block;background-color: #81c5ba;padding:0 10px;color:#fff;position:relative;height:50px;line-height:50px;vertical-align:middle;font-size:16px;font-weight:bold;";
         $(header).html(p.header);
-        var closeicon = document.createElement("span");
+        var closeicon = document.createElement("closeicon");
         closeicon.innerText = "✕";
-        closeicon.style = "position:absolute;right:10px;top:0;cursor:pointer; color: #000;text-shadow: 0 1px 0 #fff;filter: alpha(opacity=50);opacity: .5;";
+        //closeicon.style = "position:absolute;right:10px;top:0;cursor:pointer; color: #000;text-shadow: 0 1px 0 #fff;filter: alpha(opacity=50);opacity: .5;";
         closeicon.onclick = function () {
             //如果定义了onclose回调函数，则调用一下。
             if (p.onclose !== undefined) {
@@ -525,7 +522,7 @@ function poplayer(p) {
     }
     //弹出框-内容
     var popcontainer = document.createElement("popbody");
-    popcontainer.style = "display:block;padding:5px 10px;";
+    //popcontainer.style = "display:block;padding:5px 10px;";
     //console.log(p.height);
     if (p.height !== undefined) {
         popcontainer.style.height = p.height;
