@@ -39,6 +39,8 @@ view.active {
     display: block;
 }
 
+
+/* 弹出窗体 */
 popheader {
     display: block;
     background-color: #81c5ba;
