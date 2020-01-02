@@ -13,8 +13,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// V1.1
-
 $(function() {
     $(document).on("click", "tab-nav", function() {
         // 标签切换
@@ -193,6 +191,7 @@ $.fn.extend({
                 }
             } else {
 
+
                 //模板是对象的场景
                 var element;
 
@@ -326,33 +325,6 @@ $.fn.extend({
                         template: p.template.t
                     });
                 }
-
-                // V1.1  
-                switch (p.template.e) {
-
-                    case "fieldset":
-                        // V1.1 增加当e为fieldset时对title属性的支持
-                        if (p.template.title) {
-                            let legend = document.createElement("legend");
-                            legend.innerText = p.template.title;
-                            element.appendChild(legend);
-                        }
-                        break;
-
-                    case "field":
-                    case "f1":
-                    case "f2":
-                    case "f3":
-                        //V1.1 增加当e为field/f1/f2/f3时对title属性的支持
-                        if (p.template.title) {
-                            let label = document.createElement("label");
-                            label.innerText = p.template.title;
-                            element.appendChild(label);
-                        }
-                        break;
-                    default:
-                        break;
-                };
 
                 //a 设置节点attribute
                 if (p.template.a !== undefined) {
