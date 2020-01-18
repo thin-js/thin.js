@@ -317,15 +317,7 @@ $.fn.extend({
                     });
                 }
 
-                // t 渲染节点的内容
-                if (p.template.t !== undefined) {
 
-                    //console.log({ function: "render t", p: p });
-                    render_by_templates({
-                        container: element,
-                        template: p.template.t
-                    });
-                }
 
                 // V1.1  
                 switch (p.template.e) {
@@ -353,6 +345,16 @@ $.fn.extend({
                     default:
                         break;
                 };
+
+                // t 渲染节点的内容
+                if (p.template.t !== undefined) {
+
+                    //console.log({ function: "render t", p: p });
+                    render_by_templates({
+                        container: element,
+                        template: p.template.t
+                    });
+                }
 
                 //a 设置节点attribute
                 if (p.template.a !== undefined) {
