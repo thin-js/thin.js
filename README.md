@@ -69,11 +69,16 @@
 |成员|类型|说明|
 |--|--|--|
 |e|string|元素名|
-|t|string/object/array/function|子模板|
-|click|function|click事件处理函数|
+|t|string<br/>object<br/>array<br/>function|子模板|
+|click|function|点击事件处理函数|
 |style|object|样式表|
+|name|string|html name属性|
+|title|string|生成标题标签，当e=fieldset时，生成legend，当e=field/f1/f2/f3时在元素内生成label标签，e为其他值是无效
 |a|object|html属性|
 |event|object|事件处理函数定义|
+|options|string</br>array</br>object|选项值|
+|selected|string|给select下拉选择框设置选中值|
+
 
 
 
