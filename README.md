@@ -4,7 +4,16 @@
 [TOC]
 
 ## 功能
-### Render
+
+|功能|说明|
+|--|--|
+|render|渲染器
+|poplayer|弹出浮层
+|tab|标签导航
+|multiview|多视图
+
+
+## Render
 渲染器
 
 ```javascript
@@ -13,7 +22,7 @@
           template:template
         });
 ```
-### poplayer
+## poplayer
 浮层渲染器
 ```javascript
         poplayer({
@@ -22,7 +31,7 @@
         })
 ```
 
-### tab 
+## tab 
 标签导航
 
 ```html
@@ -31,7 +40,7 @@
             <tab-nav>item2</tab-nav>
         <tab>
 ``` 
-### multiview
+## multiview
 多视图
 ```html
         <multiview>
@@ -39,9 +48,7 @@
             <view>view 2</view>
         </multiview>
 ```
-## render渲染器
 
-## poplayer 弹出框
 
 
 ## 在render和poplayer中使用模板
