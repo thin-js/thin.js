@@ -5,18 +5,23 @@ tab {
     margin-bottom: 10px;
     border-bottom: 1px solid #81c5ba;
     display: block;
+    padding-left: 40px;
 }
+
 
 /* tab切换按钮 */
 
 tab-nav {
-    height: 30px;
-    width: 85px;
-    line-height: 30px;
-    text-align: center;
+    height: 21px;
+    /* width: 85px; */
+    line-height: 21px;
+    /* text-align: center; */
     font-size: 14px;
     border: 1px solid #ccc;
     border-bottom: 0px solid #81c5ba;
+    border-radius: 6px 6px 0px 0px;
+    padding: 3px 15px 0px 15px;
+    margin: 0px 1px 0px 0px;
     display: inline-block;
 }
 
@@ -41,17 +46,18 @@ view.active {
 
 
 /* 弹出窗体 */
+
 popheader {
     display: block;
     background-color: #81c5ba;
     padding: 0 10px;
     color: #fff;
     position: relative;
-    height: 30px;
-    line-height: 30px;
+    /* height: 30px; */
+    /* line-height: 30px; */
     /* vertical-align: middle; */
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    /* font-weight: bold; */
 }
 
 popdialog {
@@ -61,7 +67,7 @@ popdialog {
     /* margin: 10% auto 0; */
     border-radius: 4px;
     background: #fff;
-    line-height: 24px;
+    /* line-height: 24px; */
     overflow: hidden;
     left: 50%;
     top: 50%;
@@ -99,15 +105,99 @@ popbody div {
     margin: 15px 0;
 }
 
-popbody label {
+
+/* popbody label {
     display: inline-block;
     width: 100px;
     text-align: right;
-}
+} */
 
 popbody span {
     display: none;
     color: red;
     font-size: 12px;
     margin-left: 15px;
+}
+
+th {
+    border-bottom: solid 1px;
+}
+
+tbody>tr:nth-child(odd):hover,
+tbody>tr:hover {
+    background-color: #ccc;
+}
+
+tbody>tr:nth-child(odd) {
+    background-color: antiquewhite;
+}
+
+label {
+    display: inline-block;
+    width: 80px;
+    color: #81c5ba;
+}
+
+button {
+    height: 26px;
+    border: solid 1px #81c5ba;
+    border-radius: 13px;
+    margin: 3px;
+    outline: none;
+    padding: 0px 13px 0px 13px;
+    vertical-align: middle;
+}
+
+button:hover {
+    background-color: #81c5ba;
+    color: #fff;
+}
+
+f1 {
+    display: inline-block;
+    width: 280px;
+}
+
+f2 {
+    display: inline-block;
+    width: 560px;
+}
+
+f1>input,
+f2>input,
+f3>input,
+field>input {
+    width: calc(100% - 84px);
+    border: none;
+    border-bottom: solid 1px #ccc;
+    outline: none;
+}
+
+fieldset {
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    margin-bottom: 3px;
+}
+
+td>input,
+td>select {
+    width: calc(100% - 4px);
+}
+
+td button {
+    height: 16px;
+    border: solid 1px #81c5ba;
+    font-size: 12px;
+    border-radius: 8px;
+    margin: 0px;
+    outline: none;
+    padding: 0px 11px 0px 11px;
+    vertical-align: middle;
+}
+
+.footer {
+    position: fixed;
+    /* border-top: solid 1px; */
+    bottom: 0px;
+    /* width: calc(100% - 30px); */
 }

@@ -15,8 +15,8 @@
 
 // V1.1
 
-$(function () {
-    $(document).on("click", "tab-nav", function () {
+$(function() {
+    $(document).on("click", "tab-nav", function() {
         // 标签切换
         $("tab-nav", this.parentElement).removeClass("active");
         $(this).addClass("active");
@@ -45,7 +45,7 @@ $(function () {
 
 $.fn.extend({
 
-    render: function (p) {
+    render: function(p) {
         //console.log({ function: "render_main", p: p });
         //this[0].data_of_thin = p.data; //将数据附加到容器。
 
@@ -194,13 +194,7 @@ $.fn.extend({
             } else {
 
                 //模板是对象的场景
-                var element;
-
-                if (p.template.e !== undefined) {
-                    element = document.createElement(p.template.e);
-                } else {
-                    element = document.createElement("div");
-                }
+                var element = document.createElement(p.template.e ? p.template.e : "div");
 
                 $(p.container).append(element);
 
@@ -210,6 +204,24 @@ $.fn.extend({
 
                 if (p.template.name !== undefined) {
                     element.setAttribute("name", p.template.name);
+                }
+
+                //V1.1 设置ID
+                if (p.template.id !== undefined) {
+                    element.setAttribute("id", p.template.id);
+                }
+                //V1.1 设置class
+                if (p.template.class !== undefined) {
+                    element.setAttribute("class", p.template.class);
+                }
+
+                //V1.1 设置宽度
+                if (p.template.width) {
+                    element.style.setProperty("width", (typeof(p.template.width) === "number" ? p.template.width + "px" : p.template.width));
+                }
+                //V1.1 设置高度
+                if (p.template.height) {
+                    element.style.setProperty("height", (typeof(p.template.height) === "number" ? p.template.height + "px" : p.template.height));
                 }
 
                 // 添加options
@@ -234,6 +246,11 @@ $.fn.extend({
                     $(element).val(selected_value);
                 }
 
+                //V1.1 设置值
+                if (p.template.value !== undefined) {
+                    let value = render_content({ template: p.template.value, container: element });
+                    $(element).val(value);
+                }
 
                 // click 绑定click用户事件处理函数
 
@@ -241,14 +258,14 @@ $.fn.extend({
                     //console.log({
                     //    function:"add onclick function"
                     //});
-                    element.onclick = function () {
+                    element.onclick = function() {
                         //console.log("click");
                         var data_container = nearest_datacontainer(this);
                         var new_data = {};
                         if (data_container !== null) {
 
                             //获取全部input的值：
-                            $("input", data_container).each(function (i, e) {
+                            $("input", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
@@ -256,14 +273,14 @@ $.fn.extend({
 
                             });
                             //获取全部select的值：
-                            $("select", data_container).each(function (i, e) {
+                            $("select", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
                                 }
                             });
                             //获取全部textarea的值：
-                            $("textarea", data_container).each(function (i, e) {
+                            $("textarea", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
@@ -283,22 +300,22 @@ $.fn.extend({
                 //  event 绑定事件侦听器
 
                 if (p.template.event !== undefined) {
-                    Object.keys(p.template.event).forEach(function (key) {
+                    Object.keys(p.template.event).forEach(function(key) {
                         //e.setAttribute(key, template.a[key]);
                         //$(element).on(key, p.template.event[key]); //逐个绑定事件侦听程序
-                        $(element).on(key, function (e) {
+                        $(element).on(key, function(e) {
                             //console.log(e);
                             var data_container = nearest_datacontainer(this);
                             var new_data = new Object;
                             //获取全部input的值：
-                            $("input", data_container).each(function (i, e) {
+                            $("input", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
                                 }
                             });
                             //获取全部select的值：
-                            $("select", data_container).each(function (i, e) {
+                            $("select", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
@@ -336,7 +353,7 @@ $.fn.extend({
                     case "f2":
                     case "f3":
                         //V1.1 增加当e为field/f1/f2/f3时对title属性的支持
-                        if (p.template.title) {
+                        if (p.template.title !== undefined) {
                             let label = document.createElement("label");
                             label.innerText = p.template.title;
                             element.appendChild(label);
@@ -356,9 +373,12 @@ $.fn.extend({
                     });
                 }
 
+
+
+
                 //a 设置节点attribute
                 if (p.template.a !== undefined) {
-                    Object.keys(p.template.a).forEach(function (key) {
+                    Object.keys(p.template.a).forEach(function(key) {
                         //e.setAttribute(key, template.a[key]);
                         if (Object.prototype.toString.call(p.template.a[key]) === "[object Function]") {
                             var data_container = nearest_datacontainer(element);
@@ -379,7 +399,7 @@ $.fn.extend({
 
                 //style 设置节点样式
                 if (p.template.style !== undefined) {
-                    Object.keys(p.template.style).forEach(function (key) {
+                    Object.keys(p.template.style).forEach(function(key) {
                         //e.setAttribute(key, template.a[key]);
                         if (Object.prototype.toString.call(p.template.style[key]) === "[object Function]") {
                             var data_container = nearest_datacontainer(element);
@@ -407,7 +427,7 @@ $.fn.extend({
             //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
             var reg = /\[\[[a-zA-Z0-9\-\./_]*\]\]/gi;
-            var result = t.replace(reg, function (m) { //使用正则表达式匹配变量名
+            var result = typeof(t) !== "string" ? t : t.replace(reg, function(m) { //使用正则表达式匹配变量名
                 //逐个匹配项处理；
                 var path = m.replace("[[", "").replace("]]", "");
                 var patharray = path.split("/");
@@ -512,12 +532,12 @@ function poplayer(p) {
     var modaldialog = document.createElement("popdialog");
     //modaldialog.style = "display:block;width:40%;position:relative;margin:10% auto 0;border-radius:4px;background:#fff;line-height:24px;overflow:hidden;";
 
-    switch (typeof (p.width)) {
+    switch (typeof(p.width)) {
         case "string":
             modaldialog.style.width = p.width;
             break;
         case "number":
-            modaldialog.style.width = p.width+"px";
+            modaldialog.style.width = p.width + "px";
             break;
         default:
             break;
@@ -541,7 +561,7 @@ function poplayer(p) {
         var closeicon = document.createElement("closeicon");
         closeicon.innerText = "✕";
         //closeicon.style = "position:absolute;right:10px;top:0;cursor:pointer; color: #000;text-shadow: 0 1px 0 #fff;filter: alpha(opacity=50);opacity: .5;";
-        closeicon.onclick = function () {
+        closeicon.onclick = function() {
             //如果定义了onclose回调函数，则调用一下。
             if (p.onclose !== undefined) {
                 p.onclose();
@@ -549,11 +569,11 @@ function poplayer(p) {
             //popmask.remove();
             $(popmask).remove();
         };
-        closeicon.onmouseover = function () {
+        closeicon.onmouseover = function() {
             this.style.filter = "alpha(opacity=80)";
             this.style.opacity = ".8";
         };
-        closeicon.onmouseout = function () {
+        closeicon.onmouseout = function() {
             this.style.filter = "alpha(opacity=50)";
             this.style.opacity = ".5";
         };
@@ -566,7 +586,7 @@ function poplayer(p) {
     //popcontainer.style = "display:block;padding:5px 10px;";
     //console.log(p.height);
 
-    switch (typeof (p.height)) {
+    switch (typeof(p.height)) {
         case "string":
             popcontainer.style.height = p.height;
             popcontainer.style.overflowY = "scroll";
@@ -603,8 +623,13 @@ function poplayer(p) {
     popDrag(header, modaldialog);
 };
 
+poplayer.close = function(element) {
+    //tobe done
+    console.log({ pos: "poplayer.close", element: element });
+}
+
 //拖拽函数
-var popDrag = function (bar, target, callback) {
+var popDrag = function(bar, target, callback) {
     //拖动事件参数对象
     var popDragParams = {
         left: 0,
@@ -612,7 +637,7 @@ var popDrag = function (bar, target, callback) {
         currentX: 0,
         currentY: 0,
         flag: false,
-        resetPosition: function () {
+        resetPosition: function() {
             //console.log(this);
             var target_style_left = $(target).css("left");
             var target_style_top = $(target).css("top");
@@ -625,12 +650,12 @@ var popDrag = function (bar, target, callback) {
         }
     };
     popDragParams.resetPosition();
-    bar.onmousedown = function (event) {
+    bar.onmousedown = function(event) {
         popDragParams.flag = true;
         if (!event) {
             event = window.event;
             //防止IE文字选中
-            bar.onselectstart = function () {
+            bar.onselectstart = function() {
                 return false;
             };
         }
@@ -638,11 +663,11 @@ var popDrag = function (bar, target, callback) {
         popDragParams.currentX = e.clientX;
         popDragParams.currentY = e.clientY;
     };
-    document.onmouseup = function () {
+    document.onmouseup = function() {
         popDragParams.flag = false;
         popDragParams.resetPosition();
     };
-    document.onmousemove = function (event) {
+    document.onmousemove = function(event) {
         var e = event ? event : window.event;
         if (popDragParams.flag) {
             var nowX = e.clientX,
