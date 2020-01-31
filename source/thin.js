@@ -25,7 +25,9 @@ $(function() {
         // 调用标签函数
         if (fun === null) {
             //console.log("no function");
-        } else if (Object.prototype.toString.call(window[fun]) === '[object Function]') {
+        } else if (
+            Object.prototype.toString.call(window[fun]) === "[object Function]"
+        ) {
             window[fun]();
         } else {
             //console.log(Object.prototype.toString.call(window[fun]));
@@ -44,7 +46,6 @@ $(function() {
 });
 
 $.fn.extend({
-
     render: function(p) {
         //console.log({ function: "render_main", p: p });
         //this[0].data_of_thin = p.data; //将数据附加到容器。
@@ -53,19 +54,21 @@ $.fn.extend({
             p.data = {};
         }
 
-        if (Object.prototype.toString.call(p.template) === '[object Array]') {
+        if (Object.prototype.toString.call(p.template) === "[object Array]") {
             render_by_data({
                 container: this[0],
                 template: p.template,
                 data: p.data
             });
-        } else if (Object.prototype.toString.call(p.data) === '[object Array]') {
+        } else if (Object.prototype.toString.call(p.data) === "[object Array]") {
             render_by_data({
                 container: this[0],
                 template: p.template,
                 data: p.data
             });
-        } else if (Object.prototype.toString.call(p.template) === '[object Object]') {
+        } else if (
+            Object.prototype.toString.call(p.template) === "[object Object]"
+        ) {
             //this[0].data_of_thin = p.data; //将数据附加到容器。
             render_by_data({
                 container: this[0],
@@ -80,11 +83,9 @@ $.fn.extend({
             });
         }
 
-
-
         function render_by_data(p) {
             //console.log({ function: "render_by_data", p: p });
-            if (Object.prototype.toString.call(p.data) === '[object Array]') {
+            if (Object.prototype.toString.call(p.data) === "[object Array]") {
                 //
                 //  数据是数组的场景。
                 //
@@ -114,7 +115,7 @@ $.fn.extend({
 
         function render_by_templates(p) {
             //console.log({ function: "render_by_templates", p: p });
-            if (Object.prototype.toString.call(p.template) === '[object Array]') {
+            if (Object.prototype.toString.call(p.template) === "[object Array]") {
                 // 模板是数组的场景。
                 //console.log("template is array");
                 for (var ti = 0; ti < p.template.length; ti++) {
@@ -138,7 +139,7 @@ $.fn.extend({
 
         function render_template(p) {
             //console.log({ function: "render_template", p: p });
-            if (Object.prototype.toString.call(p.template) === '[object String]') {
+            if (Object.prototype.toString.call(p.template) === "[object String]") {
                 //
                 // 模板是字符串的场景
                 //
@@ -154,14 +155,18 @@ $.fn.extend({
                 //for (var ci = 0; ci < e.cloneNode.length; ci++) {
                 //    e.childNodes[ci].data_of_thin = p.data;
                 //}
-            } else if (Object.prototype.toString.call(p.template) === '[object Object]') {
+            } else if (
+                Object.prototype.toString.call(p.template) === "[object Object]"
+            ) {
                 //模板是对象的场景
                 render_object_template({
                     container: p.container,
                     template: p.template,
                     data: p.data
                 });
-            } else if (Object.prototype.toString.call(p.template) === '[object Function]') {
+            } else if (
+                Object.prototype.toString.call(p.template) === "[object Function]"
+            ) {
                 var datacontainer = nearest_datacontainer(p.container);
 
                 p.template({
@@ -179,10 +184,12 @@ $.fn.extend({
         // render object
         //
         function render_object_template(p) {
-
             if (p.template.datapath !== undefined && p.data === undefined) {
                 //console.log({ function: "datapath find", p: p });
-                var data = datarover({ container: p.container, path: p.template.datapath });
+                var data = datarover({
+                    container: p.container,
+                    path: p.template.datapath
+                });
                 //console.log(data);
                 if (data !== null) {
                     render_by_data({
@@ -192,9 +199,10 @@ $.fn.extend({
                     });
                 }
             } else {
-
                 //模板是对象的场景
-                var element = document.createElement(p.template.e ? p.template.e : "div");
+                var element = document.createElement(
+                    p.template.e ? p.template.e : "div"
+                );
 
                 $(p.container).append(element);
 
@@ -217,23 +225,42 @@ $.fn.extend({
 
                 //V1.1 设置宽度
                 if (p.template.width) {
-                    element.style.setProperty("width", (typeof(p.template.width) === "number" ? p.template.width + "px" : p.template.width));
+                    element.style.setProperty(
+                        "width",
+                        typeof p.template.width === "number" ?
+                        p.template.width + "px" :
+                        p.template.width
+                    );
                 }
                 //V1.1 设置高度
                 if (p.template.height) {
-                    element.style.setProperty("height", (typeof(p.template.height) === "number" ? p.template.height + "px" : p.template.height));
+                    element.style.setProperty(
+                        "height",
+                        typeof p.template.height === "number" ?
+                        p.template.height + "px" :
+                        p.template.height
+                    );
                 }
 
                 // 添加options
                 if (p.template.options !== undefined) {
-                    if (Object.prototype.toString.call(p.template.options) === '[object Array]') {
+                    if (
+                        Object.prototype.toString.call(p.template.options) ===
+                        "[object Array]"
+                    ) {
                         for (var oi = 0; oi < p.template.options.length; oi++) {
                             element.options.add(new Option(p.template.options[oi]));
                         }
                         //
-                    } else if (Object.prototype.toString.call(p.template.options) === '[object Object]') {
+                    } else if (
+                        Object.prototype.toString.call(p.template.options) ===
+                        "[object Object]"
+                    ) {
                         //
-                    } else if (Object.prototype.toString.call(p.template.options) === '[object String]') {
+                    } else if (
+                        Object.prototype.toString.call(p.template.options) ===
+                        "[object String]"
+                    ) {
                         var options = p.template.options.split(",");
                         for (var soi = 0; soi < options.length; soi++) {
                             element.options.add(new Option(options[soi]));
@@ -242,13 +269,19 @@ $.fn.extend({
                 }
                 // 设置选中值
                 if (p.template.selected !== undefined) {
-                    var selected_value = render_content({ template: p.template.selected, container: element });
+                    var selected_value = render_content({
+                        template: p.template.selected,
+                        container: element
+                    });
                     $(element).val(selected_value);
                 }
 
                 //V1.1 设置值
                 if (p.template.value !== undefined) {
-                    let value = render_content({ template: p.template.value, container: element });
+                    let value = render_content({
+                        template: p.template.value,
+                        container: element
+                    });
                     $(element).val(value);
                 }
 
@@ -263,14 +296,12 @@ $.fn.extend({
                         var data_container = nearest_datacontainer(this);
                         var new_data = {};
                         if (data_container !== null) {
-
                             //获取全部input的值：
                             $("input", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     var name = this.attributes["name"].value;
                                     new_data[name] = $(this).val();
                                 }
-
                             });
                             //获取全部select的值：
                             $("select", data_container).each(function(i, e) {
@@ -296,7 +327,6 @@ $.fn.extend({
                     };
                 }
 
-
                 //  event 绑定事件侦听器
 
                 if (p.template.event !== undefined) {
@@ -306,7 +336,7 @@ $.fn.extend({
                         $(element).on(key, function(e) {
                             //console.log(e);
                             var data_container = nearest_datacontainer(this);
-                            var new_data = new Object;
+                            var new_data = new Object();
                             //获取全部input的值：
                             $("input", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
@@ -334,11 +364,8 @@ $.fn.extend({
                     });
                 }
 
-
-
-                // V1.1  
+                // V1.1
                 switch (p.template.e) {
-
                     case "fieldset":
                         // V1.1 增加当e为fieldset时对title属性的支持
                         if (p.template.title) {
@@ -361,11 +388,10 @@ $.fn.extend({
                         break;
                     default:
                         break;
-                };
+                }
 
                 // t 渲染节点的内容
                 if (p.template.t !== undefined) {
-
                     //console.log({ function: "render t", p: p });
                     render_by_templates({
                         container: element,
@@ -373,27 +399,31 @@ $.fn.extend({
                     });
                 }
 
-
-
-
                 //a 设置节点attribute
                 if (p.template.a !== undefined) {
                     Object.keys(p.template.a).forEach(function(key) {
                         //e.setAttribute(key, template.a[key]);
-                        if (Object.prototype.toString.call(p.template.a[key]) === "[object Function]") {
+                        if (
+                            Object.prototype.toString.call(p.template.a[key]) ===
+                            "[object Function]"
+                        ) {
                             var data_container = nearest_datacontainer(element);
-                            element.setAttribute(key, p.template.a[key]({
-                                container: element,
-                                data: data_container.data_of_thin
-                            }));
+                            element.setAttribute(
+                                key,
+                                p.template.a[key]({
+                                    container: element,
+                                    data: data_container.data_of_thin
+                                })
+                            );
                         } else {
-                            element.setAttribute(key, render_content({
-                                template: p.template.a[key],
-                                container: element
-                            }));
+                            element.setAttribute(
+                                key,
+                                render_content({
+                                    template: p.template.a[key],
+                                    container: element
+                                })
+                            );
                         }
-
-
                     });
                 }
 
@@ -401,23 +431,31 @@ $.fn.extend({
                 if (p.template.style !== undefined) {
                     Object.keys(p.template.style).forEach(function(key) {
                         //e.setAttribute(key, template.a[key]);
-                        if (Object.prototype.toString.call(p.template.style[key]) === "[object Function]") {
+                        if (
+                            Object.prototype.toString.call(p.template.style[key]) ===
+                            "[object Function]"
+                        ) {
                             var data_container = nearest_datacontainer(element);
-                            element.style.setProperty(key, p.template.style[key]({
-                                container: element,
-                                data: data_container.data_of_thin
-                            }));
+                            element.style.setProperty(
+                                key,
+                                p.template.style[key]({
+                                    container: element,
+                                    data: data_container.data_of_thin
+                                })
+                            );
                         } else {
-                            element.style.setProperty(key, render_content({
-                                template: p.template.style[key],
-                                container: element
-                            }));
+                            element.style.setProperty(
+                                key,
+                                render_content({
+                                    template: p.template.style[key],
+                                    container: element
+                                })
+                            );
                         }
                     });
                 }
             }
         }
-
 
         //
         //  根据模板串和数据容器生成字符串
@@ -427,41 +465,48 @@ $.fn.extend({
             //var data = nearest_datacontainer( p.container.data_of_thin);
             //console.log("render_content");
             var reg = /\[\[[a-zA-Z0-9\-\./_]*\]\]/gi;
-            var result = typeof(t) !== "string" ? t : t.replace(reg, function(m) { //使用正则表达式匹配变量名
-                //逐个匹配项处理；
-                var path = m.replace("[[", "").replace("]]", "");
-                var patharray = path.split("/");
-                //console.log(path); console.log(patharray);
-                var data_container = nearest_datacontainer(p.container);
-                for (var i = 0; i < patharray.length; i++) {
-                    if (patharray[i] === "..") {
-                        if (isDOMElement(data_container)) {
-                            data_container = nearest_datacontainer(data_container.parentNode); //上溯节点
-                        } else {
-                            return m;
-                        }
-                    } else {
-                        if (isDOMElement(data_container)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
-                            if (data_container.data_of_thin === undefined) {
-                                return m;
+            var result =
+                typeof t !== "string" ?
+                t :
+                t.replace(reg, function(m) {
+                    //使用正则表达式匹配变量名
+                    //逐个匹配项处理；
+                    var path = m.replace("[[", "").replace("]]", "");
+                    var patharray = path.split("/");
+                    //console.log(path); console.log(patharray);
+                    var data_container = nearest_datacontainer(p.container);
+                    for (var i = 0; i < patharray.length; i++) {
+                        if (patharray[i] === "..") {
+                            if (isDOMElement(data_container)) {
+                                data_container = nearest_datacontainer(
+                                    data_container.parentNode
+                                ); //上溯节点
                             } else {
-                                data_container = data_container.data_of_thin;
+                                return m;
+                            }
+                        } else {
+                            if (isDOMElement(data_container)) {
+                                //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                                if (data_container.data_of_thin === undefined) {
+                                    return m;
+                                } else {
+                                    data_container = data_container.data_of_thin;
+                                }
+                            }
+                            if (data_container === null) {
+                                return null;
+                                //return "";
+                            } else {
+                                data_container = data_container[patharray[i]];
                             }
                         }
-                        if (data_container === null) {
-                            return null;
-                            //return "";
-                        } else {
-                            data_container = data_container[patharray[i]];
-                        }
                     }
-                }
-                if (data_container === null || data_container === undefined) {
-                    return "";
-                } else {
-                    return data_container;
-                }
-            });
+                    if (data_container === null || data_container === undefined) {
+                        return "";
+                    } else {
+                        return data_container;
+                    }
+                });
             return result;
         }
 
@@ -475,7 +520,6 @@ $.fn.extend({
             }
             return container;
         }
-
 
         // @param  { any } p  参数
         //    p.path      { sting } 查找路径
@@ -493,7 +537,8 @@ $.fn.extend({
                         return null;
                     }
                 } else {
-                    if (isDOMElement(dp)) { //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+                    if (isDOMElement(dp)) {
+                        //如果dp是文档节点，则从文档节点中取其包含数据为dp。
                         if (dp.data_of_thin === undefined) {
                             return null;
                         } else {
@@ -515,7 +560,11 @@ $.fn.extend({
 
         // 判断一个对象是否dom element;
         function isDOMElement(obj) {
-            return !!(obj && typeof window !== 'undefined' && (obj === window || obj.nodeType));
+            return !!(
+                obj &&
+                typeof window !== "undefined" &&
+                (obj === window || obj.nodeType)
+            );
         }
     }
 });
@@ -532,7 +581,7 @@ function poplayer(p) {
     var modaldialog = document.createElement("popdialog");
     //modaldialog.style = "display:block;width:40%;position:relative;margin:10% auto 0;border-radius:4px;background:#fff;line-height:24px;overflow:hidden;";
 
-    switch (typeof(p.width)) {
+    switch (typeof p.width) {
         case "string":
             modaldialog.style.width = p.width;
             break;
@@ -546,7 +595,6 @@ function poplayer(p) {
     if (p.width !== undefined) {
         modaldialog.style.width = p.width;
     }
-
 
     //if (p.height !== undefined) {
     //    modaldialog.style.height = p.height;
@@ -579,14 +627,13 @@ function poplayer(p) {
         };
         header.appendChild(closeicon);
         modaldialog.appendChild(header);
-
     }
     //弹出框-内容
     var popcontainer = document.createElement("popbody");
     //popcontainer.style = "display:block;padding:5px 10px;";
     //console.log(p.height);
 
-    switch (typeof(p.height)) {
+    switch (typeof p.height) {
         case "string":
             popcontainer.style.height = p.height;
             popcontainer.style.overflowY = "scroll";
@@ -599,7 +646,7 @@ function poplayer(p) {
             popcontainer.style.maxHeight = "600px";
             popcontainer.style.overflowY = "scroll";
             break;
-    };
+    }
 
     // if (p.height !== undefined) {
     //     popcontainer.style.height = p.height;
@@ -621,12 +668,12 @@ function poplayer(p) {
     }
     //绑定拖拽
     popDrag(header, modaldialog);
-};
+}
 
 poplayer.close = function(element) {
     //tobe done
     console.log({ pos: "poplayer.close", element: element });
-}
+};
 
 //拖拽函数
 var popDrag = function(bar, target, callback) {
@@ -678,7 +725,10 @@ var popDrag = function(bar, target, callback) {
             target.style.top = parseInt(popDragParams.top) + disY + "px";
 
             if (typeof callback == "function") {
-                callback((parseInt(popDragParams.left) || 0) + disX, (parseInt(popDragParams.top) || 0) + disY);
+                callback(
+                    (parseInt(popDragParams.left) || 0) + disX,
+                    (parseInt(popDragParams.top) || 0) + disY
+                );
             }
 
             if (event.preventDefault) {
