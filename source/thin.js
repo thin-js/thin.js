@@ -167,7 +167,7 @@ $.fn.extend({
                 p.template({
                     container: p.container,
                     //template: p.template,
-                    data: datacontainer.data_of_thin
+                    data: datacontainer ? datacontainer.data_of_thin : undefined
                 });
             } else {
                 // 不支持的场景。
