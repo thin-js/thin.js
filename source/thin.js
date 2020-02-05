@@ -351,6 +351,13 @@ $.fn.extend({
                                     new_data[name] = $(this).val();
                                 }
                             });
+                            //获取全部textarea的值：
+                            $("textarea", data_container).each(function(i, e) {
+                                if (this.attributes["name"] !== undefined) {
+                                    var name = this.attributes["name"].value;
+                                    new_data[name] = $(this).val();
+                                }
+                            });
 
                             var eventtype = e.type;
                             p.template.event[eventtype]({
