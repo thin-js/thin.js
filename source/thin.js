@@ -206,7 +206,9 @@ $.fn.extend({
 
                 $(p.container).append(element);
 
-                if (p.data !== undefined) {
+                if (p.template.data) {
+                    element.data_of_thin = p.template.data;
+                } else if (p.data !== undefined) {
                     element.data_of_thin = p.data; //数据附着到当前节点。
                 }
 
@@ -225,42 +227,22 @@ $.fn.extend({
 
                 //V1.1 设置宽度
                 if (p.template.width) {
-                    element.style.setProperty(
-                        "width",
-                        typeof p.template.width === "number" ?
-                        p.template.width + "px" :
-                        p.template.width
-                    );
+                    element.style.setProperty("width", typeof p.template.width === "number" ? p.template.width + "px" : p.template.width);
                 }
                 //V1.1 设置高度
                 if (p.template.height) {
-                    element.style.setProperty(
-                        "height",
-                        typeof p.template.height === "number" ?
-                        p.template.height + "px" :
-                        p.template.height
-                    );
+                    element.style.setProperty("height", typeof p.template.height === "number" ? p.template.height + "px" : p.template.height);
                 }
 
                 // 添加options
                 if (p.template.options !== undefined) {
-                    if (
-                        Object.prototype.toString.call(p.template.options) ===
-                        "[object Array]"
-                    ) {
+                    if (Object.prototype.toString.call(p.template.options) === "[object Array]") {
                         for (var oi = 0; oi < p.template.options.length; oi++) {
                             element.options.add(new Option(p.template.options[oi]));
                         }
-                        //
-                    } else if (
-                        Object.prototype.toString.call(p.template.options) ===
-                        "[object Object]"
-                    ) {
-                        //
-                    } else if (
-                        Object.prototype.toString.call(p.template.options) ===
-                        "[object String]"
-                    ) {
+                    } else if (Object.prototype.toString.call(p.template.options) === "[object Object]") {
+
+                    } else if (Object.prototype.toString.call(p.template.options) === "[object String]") {
                         var options = p.template.options.split(",");
                         for (var soi = 0; soi < options.length; soi++) {
                             element.options.add(new Option(options[soi]));
@@ -283,6 +265,30 @@ $.fn.extend({
                         container: element
                     });
                     $(element).val(value);
+                }
+                //V1.1 数据绑定
+                if (p.template.bind) {
+                    var data_container = nearest_datacontainer(element);
+                    if (data_container) {
+                        var data = data_container.data_of_thin;
+                        let patharray = p.template.bind.split('/');
+                        for (var i = 0; i < patharray.length - 1; i++) {
+                            data = data[patharray[i]];
+                        }
+                        $(element).val(data[patharray[patharray.length - 1]]);
+                        $(element).on("change", (e) => {
+                            console.log(e);
+                            var data = data_container.data_of_thin;
+                            for (var i = 0; i < patharray.length - 1; i++) {
+                                if (!data[patharray[i]]) {
+                                    data[patharray[i]] = {}
+                                };
+                                data = data[patharray[i]];
+                            }
+                            data[patharray[patharray.length - 1]] = $(element).val();
+                            console.log(data_container.data_of_thin);
+                        });
+                    }
                 }
 
                 // click 绑定click用户事件处理函数
@@ -567,11 +573,7 @@ $.fn.extend({
 
         // 判断一个对象是否dom element;
         function isDOMElement(obj) {
-            return !!(
-                obj &&
-                typeof window !== "undefined" &&
-                (obj === window || obj.nodeType)
-            );
+            return !!(obj && typeof window !== "undefined" && (obj === window || obj.nodeType));
         }
     }
 });
@@ -586,7 +588,6 @@ function poplayer(p) {
 
     //弹出框
     var modaldialog = document.createElement("popdialog");
-    //modaldialog.style = "display:block;width:40%;position:relative;margin:10% auto 0;border-radius:4px;background:#fff;line-height:24px;overflow:hidden;";
 
     switch (typeof p.width) {
         case "string":
@@ -603,9 +604,6 @@ function poplayer(p) {
         modaldialog.style.width = p.width;
     }
 
-    //if (p.height !== undefined) {
-    //    modaldialog.style.height = p.height;
-    //}
     popmask.appendChild(modaldialog);
     //弹出框-标题
     var header;
@@ -637,8 +635,6 @@ function poplayer(p) {
     }
     //弹出框-内容
     var popcontainer = document.createElement("popbody");
-    //popcontainer.style = "display:block;padding:5px 10px;";
-    //console.log(p.height);
 
     switch (typeof p.height) {
         case "string":
@@ -655,13 +651,6 @@ function poplayer(p) {
             break;
     }
 
-    // if (p.height !== undefined) {
-    //     popcontainer.style.height = p.height;
-    //     popcontainer.style.overflowY = "scroll";
-    // } else {
-    //     popcontainer.style.maxHeight = "600px";
-    //     popcontainer.style.overflowY = "scroll";
-    // }
     modaldialog.appendChild(popcontainer);
     document.body.appendChild(popmask);
 
