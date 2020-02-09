@@ -1,0 +1,113 @@
+/* tab栏切换容器 */
+
+tab {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #81c5ba;
+    display: block;
+}
+
+/* tab切换按钮 */
+
+tab-nav {
+    height: 30px;
+    width: 85px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-bottom: 0px solid #81c5ba;
+    display: inline-block;
+}
+
+tab-nav.active {
+    background-color: #81c5ba;
+    color: #fff;
+    border: 1px solid #81c5ba;
+}
+
+multiview {
+    display: block;
+    position: relative;
+}
+
+view {
+    display: none;
+}
+
+view.active {
+    display: block;
+}
+
+
+/* 弹出窗体 */
+popheader {
+    display: block;
+    background-color: #81c5ba;
+    padding: 0 10px;
+    color: #fff;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    /* vertical-align: middle; */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+popdialog {
+    display: block;
+    /* width: 400px; */
+    position: relative;
+    /* margin: 10% auto 0; */
+    border-radius: 4px;
+    background: #fff;
+    line-height: 24px;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+closeicon {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    cursor: pointer;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=50);
+    opacity: .5;
+}
+
+popmask {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .4);
+    overflow: hidden;
+}
+
+popbody {
+    display: block;
+    padding: 5px 10px;
+}
+
+popbody div {
+    margin: 15px 0;
+}
+
+popbody label {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+}
+
+popbody span {
+    display: none;
+    color: red;
+    font-size: 12px;
+    margin-left: 15px;
+}
