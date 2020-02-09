@@ -1,5 +1,4 @@
-# thin.js
-前端框架都太重了，自己写个羽量级的，基于html5+css3+jquery。
+更多使用说明参见：<a href='https://github.com/thin-js/thin.js/wiki'>https://github.com/thin-js/thin.js/wiki<a>
 
 ## 开始使用
 
@@ -24,6 +23,11 @@ $(selector).render({
 });
 ```
 
-更多使用说明参见：<a href='https://github.com/thin-js/thin.js/wiki'>https://github.com/thin-js/thin.js/wiki<a>
+## What's new ?
+
+V1.1
+* if
+* switch case
+* bind
 
 
