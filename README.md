@@ -3,7 +3,7 @@
 
 ## 开始使用
 
-添加对jquery的引用,thinjs.com上的版本为3.4。
+添加对jquery的引用,thinjs.com上的版本为3.4.1。
 ``` html
 <script src="http://thinjs.com/jquery.js"></script>
 ```
