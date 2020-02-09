@@ -1,7 +1,7 @@
 # thin.js
 前端框架都太重了，自己写个羽量级的，基于html5+css3+jquery。
 
-[TOC]
+更多使用说明参见：https://github.com/thin-js/thin.js/wiki
 
 ## 功能
 
