@@ -24,6 +24,6 @@ $(selector).render({
 });
 ```
 
-更多使用说明参见：https://github.com/thin-js/thin.js/wiki
+更多使用说明参见：<a href='https://github.com/thin-js/thin.js/wiki'>https://github.com/thin-js/thin.js/wiki<a>
 
 
