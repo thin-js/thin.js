@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../jquery.js"></script>
+    <script src="../thin.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <container></container>
+
+    <script>
+        $(function() {
+            var data = {
+                title: "foreach test",
+                items: [{
+                    f1: "row1",
+                    f2: "row1f2"
+                }, {
+                    f1: "row2",
+                    f2: "row2f2"
+                }]
+            }
+
+            $("container").render({
+                data: data,
+                template: {
+                    e: "fieldset",
+                    title: "[[title]]",
+                    t: {
+                        foreach: "items",
+                        t: {
+                            e: "li",
+                            t: "[[f1]]:[[f2]]"
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
