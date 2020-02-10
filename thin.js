@@ -50,48 +50,26 @@ $.fn.extend({
             });
         } else {
             this[0].data_of_thin = p.data; //将数据附加到容器。
-            render_by_templates({
-                c: this[0],
-                t: p.template
-            });
+            render_by_templates({ c: this[0], t: p.template });
         }
 
         function render_by_data(p) {
             if (Array.isArray(p.d)) {
                 //  数据是数组的场景。
-                for (var di = 0; di < p.d.length; di++) {
-                    // 逐条数据渲染。
-                    render_by_templates({
-                        c: p.c,
-                        t: p.t,
-                        d: p.d[di]
-                    });
-                }
-            } else {
-                render_by_templates({
-                    c: p.c,
-                    t: p.t,
-                    d: p.d
+                p.d.forEach(d => {
+                    render_by_templates({ c: p.c, t: p.t, d: d });
                 });
+            } else {
+                render_by_templates({ c: p.c, t: p.t, d: p.d });
             }
         }
 
         function render_by_templates(p) {
             if (Array.isArray(p.t)) {
                 // 模板是数组的场景。
-                for (var ti = 0; ti < p.t.length; ti++) {
-                    render_template({
-                        t: p.t[ti],
-                        c: p.c,
-                        d: p.d
-                    }); //逐条调用渲染器。
-                }
+                p.t.forEach((t) => { render_template({ t: t, c: p.c, d: p.d }); }); //逐条调用渲染器。   
             } else {
-                render_template({
-                    t: p.t,
-                    c: p.c,
-                    d: p.d
-                }); //逐条调用渲染器。
+                render_template({ t: p.t, c: p.c, d: p.d });
             }
         }
 
@@ -99,23 +77,15 @@ $.fn.extend({
             if (typeof(p.t) === "string") {
                 // 模板是字符串的场景
                 let e = document.createDocumentFragment();
-                $(e).append(render_content({
-                    t: p.t,
-                    c: p.c
-                }));
+                $(e).append(render_content({ t: p.t, c: p.c }));
                 p.c.appendChild(e);
             } else if (Object.prototype.toString.call(p.t) === "[object Object]") {
                 //模板是对象的场景
-                render_object_template({
-                    c: p.c,
-                    t: p.t,
-                    d: p.d
-                });
+                render_object_template({ c: p.c, t: p.t, d: p.d });
             } else if (typeof(p.t) === "function") {
                 let datacontainer = nearest_datacontainer(p.c);
                 p.t({
                     container: p.c,
-                    //template: p.template,
                     data: datacontainer ? datacontainer.data_of_thin : undefined
                 });
             } else {
@@ -131,11 +101,7 @@ $.fn.extend({
                     path: p.t.datapath
                 });
                 if (data !== null) {
-                    render_by_data({
-                        c: p.c,
-                        d: data,
-                        t: p.t
-                    });
+                    render_by_data({ c: p.c, d: data, t: p.t });
                 }
             } else {
                 if (p.t.if !== undefined) {
@@ -202,19 +168,16 @@ $.fn.extend({
                     } else if (Array.isArray(p.t.foreach)) {
                         d = p.t.foreach
                     }
-                    if (d) render_by_data({
-                        c: p.c,
-                        d: d,
-                        t: p.t.t
-                    });
+                    if (d) render_by_data({ c: p.c, d: d, t: p.t.t });
                 } else {
                     // e 模板
-                    render();
+                    if (p.c) render();
                 }
 
                 function render() {
                     //模板是对象的场景
-                    var element = document.createElement(p.t.e ? p.t.e : "div");
+                    let element = document.createElement(p.t.e ? p.t.e : "div");
+                    let data_container = nearest_datacontainer(element);
                     p.c.appendChild(element);
 
                     if (p.t.data) {
@@ -232,36 +195,23 @@ $.fn.extend({
                     // 添加options
                     if (p.t.options !== undefined) {
                         if (Array.isArray(p.t.options)) {
-                            for (let oi = 0; oi < p.t.options.length; oi++) {
-                                element.options.add(new Option(p.t.options[oi]));
-                            }
+                            p.t.options.forEach(o => { element.options.add(new Option(o)); })
                         } else if (typeof(p.t.options) === "string") {
-                            let options = p.t.options.split(",");
-                            for (let soi = 0; soi < options.length; soi++) {
-                                element.options.add(new Option(options[soi]));
-                            }
+                            p.t.options.split(",").forEach(o => { element.options.add(new Option(o)); })
                         }
                     }
                     // 设置选中值
                     if (p.t.selected !== undefined) {
-                        let selected_value = render_content({
-                            t: p.t.selected,
-                            c: element
-                        });
-                        $(element).val(selected_value);
+                        $(element).val(render_content({ t: p.t.selected, c: element }));
                     }
 
                     //V1.1 设置值
                     if (p.t.value !== undefined) {
-                        let value = render_content({
-                            t: p.t.value,
-                            c: element
-                        });
-                        $(element).val(value);
+                        $(element).val(render_content({ t: p.t.value, c: element }));
                     }
                     //V1.1 数据绑定
                     if (p.t.bind) {
-                        let data_container = nearest_datacontainer(element);
+                        //let data_container = nearest_datacontainer(element);
                         if (data_container) {
                             let data = data_container.data_of_thin;
                             let patharray = p.t.bind.split('/');
@@ -270,7 +220,6 @@ $.fn.extend({
                             }
                             $(element).val(data[patharray[patharray.length - 1]]);
                             $(element).on("change", (e) => {
-                                console.log(e);
                                 let data = data_container.data_of_thin;
                                 for (let i = 0; i < patharray.length - 1; i++) {
                                     if (!data[patharray[i]]) {
@@ -350,10 +299,9 @@ $.fn.extend({
                                     }
                                 });
 
-                                let eventtype = e.type;
                                 p.t.event[eventtype]({
                                     sender: this,
-                                    type: eventtype,
+                                    type: e.type,
                                     event: e,
                                     org_data: data_container.data_of_thin,
                                     new_data: new_data
@@ -378,7 +326,7 @@ $.fn.extend({
                         case "f2":
                         case "f3":
                             //V1.1 增加当e为field/f1/f2/f3时对title属性的支持
-                            if (p.t.title !== undefined) {
+                            if (p.t.title) {
                                 let label = document.createElement("label");
                                 label.innerText = render_content({ t: p.t.title, c: element });
                                 element.appendChild(label);
@@ -389,18 +337,13 @@ $.fn.extend({
                     }
 
                     // t 渲染节点的内容
-                    if (p.t.t !== undefined) {
-                        render_by_templates({
-                            c: element,
-                            t: p.t.t
-                        });
-                    }
+                    if (p.t.t !== undefined) render_by_templates({ c: element, t: p.t.t });
 
                     //a 设置节点attribute
                     if (p.t.a !== undefined) {
                         Object.keys(p.t.a).forEach(function(key) {
                             if (typeof(p.t.a[key]) === "function") {
-                                let data_container = nearest_datacontainer(element);
+                                //let data_container = nearest_datacontainer(element);
                                 element.setAttribute(
                                     key,
                                     p.t.a[key]({
@@ -424,7 +367,7 @@ $.fn.extend({
                     if (p.t.style !== undefined) {
                         Object.keys(p.t.style).forEach(function(key) {
                             if (typeof(p.t.style[key]) === "function") {
-                                let data_container = nearest_datacontainer(element);
+                                //let data_container = nearest_datacontainer(element);
                                 element.style.setProperty(
                                     key,
                                     p.t.style[key]({
@@ -556,28 +499,11 @@ $.fn.extend({
 function poplayer(p) {
     //蒙版层
     var popmask = document.createElement("popmask");
-    //popmask.style = "display:block;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,.4);overflow:hidden;";
-    //popmask.style.zIndex = maxz + 1; //设置弹出层的zIndax为maxz+1；
     popmask.style.zIndex = 1000;
 
     //弹出框
     var modaldialog = document.createElement("popdialog");
-
-    switch (typeof p.width) {
-        case "string":
-            modaldialog.style.width = p.width;
-            break;
-        case "number":
-            modaldialog.style.width = p.width + "px";
-            break;
-        default:
-            break;
-    }
-
-    if (p.width !== undefined) {
-        modaldialog.style.width = p.width;
-    }
-
+    modaldialog.style.width = (typeof p.width === 'number') ? p.width + "px" : p.width;
     popmask.appendChild(modaldialog);
     //弹出框-标题
     var header;
@@ -610,17 +536,15 @@ function poplayer(p) {
     switch (typeof p.height) {
         case "string":
             popcontainer.style.height = p.height;
-            popcontainer.style.overflowY = "scroll";
             break;
         case "number":
             popcontainer.style.height = p.height + "px";
-            popcontainer.style.overflowY = "scroll";
             break;
         default:
             popcontainer.style.maxHeight = "600px";
-            popcontainer.style.overflowY = "scroll";
             break;
     }
+    popcontainer.style.overflowY = "scroll";
 
     modaldialog.appendChild(popcontainer);
     document.body.appendChild(popmask);
@@ -698,9 +622,7 @@ var popDrag = function(bar, target, callback) {
                 );
             }
 
-            if (event.preventDefault) {
-                event.preventDefault();
-            }
+            if (event.preventDefault) { event.preventDefault(); }
             return false;
         }
     };
