@@ -299,7 +299,7 @@ $.fn.extend({
                                     }
                                 });
 
-                                p.t.event[eventtype]({
+                                p.t.event[e.type]({
                                     sender: this,
                                     type: e.type,
                                     event: e,
@@ -567,7 +567,7 @@ poplayer.close = function(element) {
 };
 
 //拖拽函数
-var popDrag = function(bar, target, callback) {
+function popDrag(bar, target, callback) {
     //拖动事件参数对象
     var popDragParams = {
         left: 0,
