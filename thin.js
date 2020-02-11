@@ -372,7 +372,7 @@ $.fn.extend({
                                     key,
                                     p.t.style[key]({
                                         container: element,
-                                        data: data_container.data_of_thin
+                                        data: data_container ? data_container.data_of_thin : null
                                     })
                                 );
                             } else {
