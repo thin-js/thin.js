@@ -177,7 +177,6 @@ $.fn.extend({
                 function render() {
                     //模板是对象的场景
                     let element = document.createElement(p.t.e ? p.t.e : "div");
-                    let data_container = nearest_datacontainer(element);
                     p.c.appendChild(element);
 
                     if (p.t.data) {
@@ -185,6 +184,8 @@ $.fn.extend({
                     } else if (p.d !== undefined) {
                         element.data_of_thin = p.d; //数据附着到当前节点。
                     }
+
+                    let data_container = nearest_datacontainer(element);
 
                     if (p.t.name !== undefined) { element.setAttribute("name", p.t.name); }
                     if (p.t.id !== undefined) { element.setAttribute("id", p.t.id); } //V1.1 设置ID
