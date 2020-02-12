@@ -221,6 +221,7 @@ $.fn.extend({
                             }
                             $(element).val(data[patharray[patharray.length - 1]]);
                             $(element).on("change", (e) => {
+                                console.log(e);
                                 let data = data_container.data_of_thin;
                                 for (let i = 0; i < patharray.length - 1; i++) {
                                     if (!data[patharray[i]]) {
@@ -228,6 +229,7 @@ $.fn.extend({
                                     };
                                     data = data[patharray[i]];
                                 }
+                                console.log(element);
                                 data[patharray[patharray.length - 1]] = $(element).val();
                                 console.log(data_container.data_of_thin);
                             });
