@@ -165,7 +165,7 @@ f2 {
 
 field {
     display: inline-block;
-    width: calc( 280px * attr(colspan));
+    width: calc( 280px * 1);
 }
 
 f1>input,
