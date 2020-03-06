@@ -163,6 +163,11 @@ f2 {
     width: 560px;
 }
 
+field {
+    display: inline-block;
+    width: calc( 280px * attr(colspan));
+}
+
 f1>input,
 f2>input,
 f3>input,
