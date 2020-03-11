@@ -177,6 +177,13 @@ field>input {
     border-bottom: solid 1px #ccc;
     outline: none;
 }
+f1>select,
+f2>select,
+f3>select
+field>select{
+    width: calc(100% - 84px);
+}
+
 
 fieldset {
     border: solid 1px #ccc;
