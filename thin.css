@@ -179,7 +179,7 @@ field>input {
 }
 f1>select,
 f2>select,
-f3>select
+f3>select,
 field>select{
     width: calc(100% - 84px);
 }
