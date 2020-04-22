@@ -6,11 +6,7 @@ util = {
             contentType: "application/json",
             type: "GET",
             success: function(data, textStatus, jqXHR) {
-                p.callback({
-                    success: true,
-                    textStatus: textStatus,
-                    data: data
-                });
+                p.callback(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == "403") {
