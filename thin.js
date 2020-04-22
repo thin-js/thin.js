@@ -84,10 +84,17 @@ $.fn.extend({
                 render_object_template({ c: p.c, t: p.t, d: p.d });
             } else if (typeof(p.t) === "function") {
                 let datacontainer = nearest_datacontainer(p.c);
-                p.t({
+                let result = p.t({
                     container: p.c,
                     data: datacontainer ? datacontainer.data_of_thin : undefined
                 });
+
+                if (result !== undefined) {
+                    let e = document.createDocumentFragment();
+                    $(e).append(render_content({ t: result, c: p.c }));
+                    p.c.appendChild(e);
+                }
+
             } else {
                 // 不支持的场景。
                 console.log(Object.prototype.toString.call(p.t));
