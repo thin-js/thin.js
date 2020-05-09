@@ -24,21 +24,22 @@ var thin = function(selector, context = document) {
     }
 };
 
-
-thin.fn = {} //selector函数容器，由extend填充，并由selector附加到结果集中。
+//selector函数容器，由extend填充，并由selector附加到结果集中。
+thin.fn = {} 
 
 thin.fn.extend = function(ext) {
     Object.assign(thin.fn, ext)
 };
 
 thin.onready = [];
+
 window.addEventListener("load", ev => {
     while (thin.onready.length) {
         thin.onready.shift()();
     }
 });
 
-thin.ready = (onready) => { thin.onready.push(onready); };
+thin.ready = function(onready){ thin.onready.push(onready); };
 
 
 thin.cookie = function(cname) {
