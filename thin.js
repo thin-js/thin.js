@@ -15,6 +15,179 @@
 
 // 常用缩写 c=container,t=template,d=data;
 
+function thin(routeTable) {
+    // thin.config = config; //保存配置
+    thin.href = thin.parseUrl(document.location.href); //初始化 thin.href;
+    thin.routeTable = routeTable;
+    $(function() {
+        // 捕获链接点击
+        $(document).on('click', 'a', function(e) {
+            e.preventDefault();
+            //preprocess(e.target.href);
+            if (thin.routeTo(e.currentTarget.href, false)) {
+                // 如果模板渲染成功
+                window.history.pushState(null, null, e.currentTarget.href);
+            } else {
+                window.location = e.currentTarget.href;
+            };
+        });
+
+        $(window).on('popstate', function(e) {
+            thin.routeTo(document.location.href, true);
+        });
+
+        thin.routeTo(document.location.href, true);
+        console.log(document.location);
+    })
+}
+
+thin.global = {};
+
+thin.routeTo = function(href, force_rerender) {
+    let target = thin.parseUrl(href);
+    if (target.origin !== thin.href.origin) { //如果路由目标的origin不同,则直接返回false,重新刷新页面.
+        return false;
+    } else {
+        thin.href = target;
+    }
+
+    thin.global.cookie = parseCookie();
+    thin.global.query = parseQuery();
+    thin.global.param = {}; //初始化参数容器.
+
+    //console.log({ token: thin.cookie.get('token1') });
+
+    return route(thin.href.pathname, thin.routeTable);
+
+    function parseCookie() {
+        let result = {};
+        document.cookie.split(';').forEach(function(item) {
+            console.log(item);
+            if (m = /^([^=]+)=([^=]+)$/gi.exec(item)) {
+                console.log(m);
+                //result[m.groups.name] = m.groups.value;
+            }
+            // if (m = /^(?<name>[^=]+)=(?<value>[^=]+)$/gi.exec(item)) {
+            //     result[m.groups.name] = m.groups.value;
+            // }
+        });
+        return result;
+    }
+
+    function parseQuery() {
+        let result = {};
+        if (thin.href.search) {
+            thin.href.search.substring(1).split('&').forEach(function(item) {
+                // 暂时禁用，因ie不支持命名分组，这段代码需要重写。
+                // if (m = /^(?<name>[^=]+)=(?<value>[^=]+)$/gi.exec(item)) {
+                //     result[m.groups.name] = m.groups.value;
+                // }
+            })
+            return result;
+        }
+        return undefined;
+    }
+
+    function route(path, routeTable) {
+        console.log({ path: path, routeTable: routeTable })
+            // 渲染当级模板
+        if (force_rerender || !routeTable.route) thin.render(routeTable.layout);
+        // 渲染子路由
+        let result = do_route();
+        // onload callback
+        if (routeTable.onload) routeTable.onload();
+        return result;
+
+        function do_route() {
+            if (routeTable.route) { //如果存在子路由表,则渲染之.
+                //遍历路由项
+                for (let key in routeTable.route) {
+                    let routeItem = routeTable.route[key];
+                    // 生成正则表达式
+                    regstr = '^'.concat( //从头匹配起
+                        (key === '/' && routeItem.route) ? '' :
+                        key.replace(/:\w+/g, function(match) {
+                            //param[match.substring(1)] = '';
+                            return '(?<' + match.substring(1) + '>[^/]*)';
+                        }), //匹配路径定义
+                        routeItem.route ? '(?<subpath>.*)?' : '', //如果有子路由则匹配出子路径
+                        '$' //匹配到结束
+                    )
+                    let reg = new RegExp(regstr, 'g');
+                    let m = reg.exec(path);
+                    if (m) { // 这里应渲染相应子路由.
+                        if (m.groups) Object.keys(m.groups).forEach(function(key) { if (key !== 'subpath') thin.global.param[key] = m.groups[key] }); // 路径参数记录.
+                        if (routeItem.route) {
+                            route(m.groups.subpath || '/', routeItem);
+                        } else {
+                            route(undefined, routeItem)
+                        }
+                        routeTable.current = routeItem; // 记录当前路由
+                        return true; //返回真,表示匹配到子路由,并退出路由渲染.
+                    }
+                }
+                // 如果走到这里表示未匹配到子路由.
+                if (routeTable.route.default) {
+                    // 这里应渲染默认路由
+                    //renderViews(routeTable.route.default);
+                    route(null, routeTable.route.default, true);
+                    routeTable.current = routeTable.route.default; //记录当前路由
+                    return true; // 返回真,表示匹配到默认路由,
+                } else {
+                    routeTable.current = undefined;
+                    // route(null, thin.routeTable.error, true);
+                    thin.render(thin.routeTable.error, { error: 'path not routed.', message: '' })
+                    return false; // 返回假表示未匹配到任何路由
+                }
+            };
+            return true;
+        }
+    }
+}
+
+
+thin.parseUrl = function(url) {
+    let m = /^((https?:)\/\/[^\/]+)([^\?]*)(\?(.*))?/.exec(url);
+    return ({
+        href: m[0],
+        origin: m[1],
+        pathname: m[3],
+        search: m[4]
+    })
+}
+thin.cookie = {
+    get: function(name) {
+        let m = document.cookie.match(name + '=(?<value>[^;]*)');
+        return m ? m.groups.value : undefined;
+    },
+    set: function(name, value) {
+        document.cookie = name.concat('=', value, ';');
+    }
+}
+
+
+thin.render = function(view, data) {
+    console.log(view, data)
+    if (Array.isArray(view)) {
+        view.forEach(function(v) { render(v); })
+    } else {
+        render(view);
+    }
+
+    function render(view) {
+        if (typeof view == 'function') view();
+        else if (typeof view == 'object') {
+            Object.keys(view).forEach(function(selector, i) {
+                $(selector).empty().render({
+                    data: data,
+                    template: view[selector]
+                });
+            });
+        } else {
+            console.log({ 'thin.render': 'unknow view define', view: view })
+        }
+    }
+}
 
 // V1.1
 
@@ -40,36 +213,58 @@ $(function() {
 
 $.fn.extend({
     render: function(p) {
-        if (p.data === undefined) { p.data = {}; }
+        if (!this[0]) {
+            console.log({ 'container not found': p });
+            return
+        };
 
-        if (Array.isArray(p.template) || Array.isArray(p.data) || Object.prototype.toString.call(p.template) === "[object Object]") {
-            render_by_data({
-                c: this[0],
-                t: p.template,
-                d: p.data
-            });
+        let readyQueue = []; // 函数堆栈，用于将需要渲染完成后执行的操作压栈，并在渲染完成后执行。
+
+        if (!p.template || Array.isArray(p)) { // 语法糖,参数直接使用模板或者模板数组
+            render_by_templates({ c: this[0], t: p });
         } else {
-            this[0].data_of_thin = p.data; //将数据附加到容器。
-            render_by_templates({ c: this[0], t: p.template });
+
+            if (p.data === undefined) { p.data = {}; }
+
+            if (
+                Array.isArray(p.template) ||
+                Array.isArray(p.data) ||
+                typeof p.template === 'function' ||
+                Object.prototype.toString.call(p.template) === "[object Object]"
+            ) {
+                render_by_data({
+                    c: this[0],
+                    t: p.template,
+                    d: p.data
+                });
+            } else {
+                this[0].data_of_thin = p.data; //将数据附加到容器。
+                render_by_templates({ c: this[0], t: p.template });
+            }
         }
+
+        // 在这里把readyQueue中的函授逐个pop出来执行一遍。
+        let f;
+        while (f = readyQueue.shift()) { f(); }
 
         function render_by_data(p) {
             if (Array.isArray(p.d)) {
-                //  数据是数组的场景。
-                p.d.forEach(d => {
+                p.d.forEach(function(d) {
                     render_by_templates({ c: p.c, t: p.t, d: d });
-                });
+                })
             } else {
-                render_by_templates({ c: p.c, t: p.t, d: p.d });
+                render_by_templates(p);
             }
         }
 
         function render_by_templates(p) {
             if (Array.isArray(p.t)) {
                 // 模板是数组的场景。
-                p.t.forEach((t) => { render_template({ t: t, c: p.c, d: p.d }); }); //逐条调用渲染器。   
+                p.t.forEach(function(t) {
+                    render_template({ t: t, c: p.c, d: p.d });
+                })
             } else {
-                render_template({ t: p.t, c: p.c, d: p.d });
+                if (p.t) render_template(p);
             }
         }
 
@@ -81,12 +276,13 @@ $.fn.extend({
                 p.c.appendChild(e);
             } else if (Object.prototype.toString.call(p.t) === "[object Object]") {
                 //模板是对象的场景
-                render_object_template({ c: p.c, t: p.t, d: p.d });
+                //render_object_template({ c: p.c, t: p.t, d: p.d });
+                render_object_template(p);
             } else if (typeof(p.t) === "function") {
                 let datacontainer = nearest_datacontainer(p.c);
                 let result = p.t({
                     container: p.c,
-                    data: datacontainer ? datacontainer.data_of_thin : undefined
+                    data: p.d || (datacontainer ? datacontainer.data_of_thin : undefined)
                 });
 
                 if (result !== undefined) {
@@ -102,7 +298,7 @@ $.fn.extend({
         }
 
         function render_object_template(p) {
-            if (p.t.datapath !== undefined && p.d === undefined) {
+            if (p.t.datapath && !p.d) {
                 let data = datarover({
                     container: p.c,
                     path: p.t.datapath
@@ -111,78 +307,256 @@ $.fn.extend({
                     render_by_data({ c: p.c, d: data, t: p.t });
                 }
             } else {
+                let data_container = nearest_datacontainer(p.c);
                 if (p.t.if !== undefined) {
-                    // if 模板
-                    switch (typeof(p.t.if)) {
-                        case "function":
-                            if (p.t.if({
-                                    container: p.c,
-                                    data: p.t.data ? p.t.data : p.data
-                                })) {
-                                render_by_templates({
-                                    c: p.c,
-                                    t: p.t.then
-                                });
-                            } else {
-                                if (p.t.else) render_by_templates({
-                                    c: p.c,
-                                    t: p.t.else
-                                });
-                            };
-                            break;
-                        default:
-                            if (p.t.if) {
-                                render_by_templates({
-                                    c: p.c,
-                                    t: p.t.then
-                                });
-                            } else {
-                                if (p.t.else) render_by_templates({
-                                    c: p.c,
-                                    t: p.t.else
-                                });
-                            };
-                            break;
-                    }
+                    template_if();
                 } else if (p.t.switch !== undefined) {
+                    template_switch();
+                } else if (p.t.foreach !== undefined) {
+                    template_foreach();
+                } else if (p.t.tab) {
+                    template_tab();
+                } else if (p.t.ajax) {
+                    template_ajax();
+                } else if (p.t.multiview) {
+                    template_multiview();
+                } else if (Object.keys(p.t)[0] === 'a') {
+                    template_a();
+                } else {
+                    return template_object();
+                }
+
+                function getdata() {
+                    if (p.t.data) {
+                        return p.t.data
+                    } else if (p.data) {
+                        return p.data
+                    } else return data_container.data_of_thin
+                }
+
+                function template_a() {
+                    render_object_template({
+                        c: p.c,
+                        d: p.d,
+                        t: {
+                            e: 'a',
+                            t: p.t.t || p.t.a,
+                            a: { href: p.t.a },
+                            class: p.t.class,
+                            event: p.c.event,
+                            click: p.t.click
+                        }
+                    });
+                }
+
+                function template_ajax() {
+                    let thin_ajax_loading;
+                    if (p.t.loading) {
+                        thin_ajax_loading = document.createElement('thin_ajax_loading');
+                        p.c.appendChild(thin_ajax_loading)
+                        render_by_templates({ c: thin_ajax_loading, t: p.t.loading, d: p.d });
+                    }
+                    jQuery.ajax({
+                        url: p.t.ajax,
+                        data: p.t.query,
+                        dataType: 'json',
+                        contentType: "application/json",
+                        method: p.t.method || 'post',
+                        success: function(data) {
+                            if (p.t.debug) console.log({ ajax: data });
+                            if (thin_ajax_loading) { $(thin_ajax_loading).remove(), thin_ajax_loading = undefined };
+                            render_by_data({ c: p.c, t: p.t.success, d: data });
+                        },
+                        error: function(error, statusText) {
+                            if (p.t.debug) console.log({ error: error, statusText: statusText })
+                            if (thin_ajax_loading) { $(thin_ajax_loading).remove(), thin_ajax_loading = undefined };
+                            render_by_data({ c: p.c, t: p.t.error, d: error });
+                        }
+                    });
+                    // container.thin_template = template; //锚定模板，以备rerender。
+                    // let loading;
+                    // if (template.loading) {
+                    //     loading = document.createElement("loading");
+                    //     container.appendChild(loading);
+                    //     thin.render_by_template(loading, template.loading);
+                    // }
+                    // container.thin_query = template.query;
+                    // thin.ajax({
+                    //     url: template.ajax,
+                    //     data: JSON.stringify(container.thin_query),
+                    //     dataType: template.dataType || "json",
+                    //     contentType: template.contentType || "application/json",
+                    //     success: data => {
+                    //         if (template.debug) { console.log({ data }) };
+                    //         if (template.loading) thin(loading).remove();
+                    //         container.thin_data = data;
+                    //         thin.render_by_template(container, template.success);
+                    //         if (template.pager) render_pager(container, template.pager);
+                    //     },
+                    //     error: (error, statusText) => {
+                    //         //console.log({ error, statusText });
+                    //         if (template.loading) thin(loading).remove();
+                    //         if (template.error) {
+                    //             template.error.data = error;
+                    //             thin.render_by_template(container, template.error);
+                    //         } else {
+                    //             let err_template = { e: "error", t: "[[responseText]]", data: error }
+                    //             thin.render_by_template(container, err_template);
+                    //         }
+                    //     }
+                    // });
+                }
+
+                function template_switch() {
                     //swtich 模板
                     let v = (typeof(p.t.switch) === "function" ?
                         p.t.switch({
                             container: p.c,
-                            data: p.t.data ? p.t.data : p.data
+                            data: getdata()
                         }) :
                         render_content({ t: p.t.switch, c: p.c }));
                     if (p.t.case === undefined) {} else if (p.t.case[v] !== undefined) {
                         render_by_templates({
                             c: p.c,
-                            t: p.t.case[v]
+                            t: p.t.case[v],
+                            d: p.d
                         });
                     } else if (p.t.case.default !== undefined) {
                         render_by_templates({
                             c: p.c,
-                            t: p.t.case.default
+                            t: p.t.case.default,
+                            d: p.d
                         });
                     }
-                } else if (p.t.foreach !== undefined) {
+                }
+
+                function template_if() {
+
+                    switch (typeof(p.t.if)) {
+                        case "function":
+                            if (p.t.if({ container: p.c, data: getdata() })) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
+                            else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                            break;
+                        case "string":
+                            let d = p.d || datarover({ path: p.t.if, container: p.c });
+                            if (d) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
+                            else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                            break;
+                        default:
+                            if (p.t.if) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
+                            else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                            break;
+                    }
+                }
+
+                function template_foreach() {
                     let d = null;
                     if (typeof(p.t.foreach) === 'function') {
                         d = p.t.foreach({ container: p.c, data: p.d });
                     } else if (typeof(p.t.foreach) === 'string') {
-                        d = datarover({
-                            container: p.c,
-                            path: p.t.foreach
-                        });
+                        d = datarover({ container: p.c, path: p.t.foreach });
                     } else if (Array.isArray(p.t.foreach)) {
                         d = p.t.foreach
                     }
                     if (d) render_by_data({ c: p.c, d: d, t: p.t.t });
-                } else {
-                    // e 模板
-                    if (p.c) render();
                 }
 
-                function render() {
-                    //模板是对象的场景
+                function template_tab() {
+                    let t = { e: "tab", id: p.t.tab.id, class: p.t.tab.class, t: [] }
+                    for (let key in p.t.tab.nav) {
+                        let nav = { e: "tab-nav", t: key }
+                        if (typeof p.t.tab.nav[key] === 'function') {
+                            nav.click = p.t.tab.nav[key];
+                        } else {
+                            nav.click = p.t.tab.nav[key].click;
+                            nav.a = p.t.tab.nav[key].a || {};
+                            nav.class = p.t.tab.nav[key].class;
+                            if (p.t.tab.nav[key].hashpath) {
+                                nav.a.hashpath = p.t.tab.nav[key].hashpath
+                                nav.click = function(para) {
+                                    console.log({ click: para })
+                                    history.pushState(null, null, nav.a.hashpath);
+                                    p.t.tab.nav[key].click(para);
+                                }
+                            } else {
+                                nav.click = p.t.tab.nav[key].click;
+                            }
+                        }
+                        t.t.push(nav);
+                    }
+
+                    let ele = render_object_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
+
+                    switchtab();
+
+                    function switchtab() {
+                        let activeindex = p.t.tab.default || 1
+                        for (let i = 0; i < ele.children.length; i++) {
+                            let regstr = new RegExp('^'.concat(ele.children[i].getAttribute('hashpath') || 'undefined$'));
+                            // console.log(regstr);
+                            if (document.location.hash.match(regstr)) {
+                                // console.log('match');
+                                activeindex = i + 1;
+                                break;
+                            }
+                        }
+                        let key = Object.keys(p.t.tab.nav)[activeindex - 1];
+                        $(ele.children[activeindex - 1]).addClass('active');
+                        // console.log({ hash: document.location.hash, activeindex: activeindex, ele, key });
+                        readyQueue.push(p.t.tab.nav[key].click);
+                    }
+
+                    function popstatehandler() {
+                        if ($(ele).parents('body')[0]) { //判断容器是否仍然存在于dom树中。
+                            for (let i = 0; i < ele.children.length; i++) { // 先把所有标签的活跃标志清除
+                                $(ele.children[i]).removeClass('active');
+                            }
+                            switchtab();
+                            let f;
+                            while (f = readyQueue.shift()) { f(); }
+                        } else {
+                            $(window).off('popstate', popstatehandler) //如果该节点已经不在文档树中，则解绑事件。
+                        };
+                    }
+                    $(window).on('popstate', popstatehandler)
+                }
+
+                function template_multiview() {
+                    template_object();
+                }
+
+                function template_object() {
+                    // 模板是对象的场景
+                    // 语法糖
+                    if (!p.t.e) {
+                        if (p.t.input) {
+                            p.t.e = "input";
+                            p.t.id = p.t.id || p.t.textarea;
+                            p.t.name = p.t.name || p.t.input
+                        } else if (p.t.textarea) {
+                            p.t.e = 'textarea';
+                            p.t.id = p.t.id || p.t.textarea;
+                            p.t.name = p.t.textarea;
+                        } else if (p.t.button) {
+                            p.t.e = 'button';
+                            p.t.t = p.t.t || p.t.button
+                        } else if (p.t.select) {
+                            p.t.e = 'select';
+                            p.t.id = p.t.id || p.t.select;
+                            p, t.name = p.t.name || p.t.select
+                        } else if (p.t.div) {
+                            p.t.t = p.t.t || p.t.div;
+                            p.t.e = 'div';
+                        } else if (p.t.img) {
+                            p.t.e = 'img';
+                            if (p.t.a) p.t.a.src = p.t.img;
+                            else p.t.a = { src: p.t.img }
+                        } else if (!p.t.e) {
+                            p.t.e = Object.keys(p.t)[0];
+                            p.t.t = p.t[p.t.e];
+                        }
+                    }
+
                     let element = document.createElement(p.t.e ? p.t.e : "div");
                     p.c.appendChild(element);
 
@@ -203,9 +577,13 @@ $.fn.extend({
                     // 添加options
                     if (p.t.options !== undefined) {
                         if (Array.isArray(p.t.options)) {
-                            p.t.options.forEach(o => { element.options.add(new Option(o)); })
+                            p.t.options.forEach(function(o) { element.options.add(new Option(o)); })
+                        } else if (typeof p.t.options === 'object') {
+                            for (let key in p.t.options) {
+                                element.options.add(new Option(key, p.t.options[key]));
+                            }
                         } else if (typeof(p.t.options) === "string") {
-                            p.t.options.split(",").forEach(o => { element.options.add(new Option(o)); })
+                            p.t.options.split(",").forEach(function(o) { element.options.add(new Option(o)); })
                         }
                     }
                     // 设置选中值
@@ -227,8 +605,7 @@ $.fn.extend({
                                 data = data[patharray[i]];
                             }
                             $(element).val(data[patharray[patharray.length - 1]]);
-                            $(element).on("change", (e) => {
-                                console.log(e);
+                            $(element).on("change", function(e) {
                                 let data = data_container.data_of_thin;
                                 for (let i = 0; i < patharray.length - 1; i++) {
                                     if (!data[patharray[i]]) {
@@ -236,48 +613,54 @@ $.fn.extend({
                                     };
                                     data = data[patharray[i]];
                                 }
-                                console.log(element);
                                 data[patharray[patharray.length - 1]] = $(element).val();
-                                console.log(data_container.data_of_thin);
                             });
                         }
+                    }
+
+
+                    // interval 循环定时
+
+                    if (p.t.timer) {
+                        if (Array.isArray(p.t.timer)) {
+                            p.t.timer.forEach(function(timer, index) { setTimer(timer) });
+                        } else setTimer(p.t.timer);
+
+                        function setTimer(timer) {
+                            if (timer.interval && timer.do) {
+                                if (!p.c.interval) p.c.interval = [];
+                                p.c.interval.push(setInterval(intervalhandler, timer.interval));
+                            } else if (timer.delay && timer.do) {
+                                setTimeout(timeouthandler, timer.delay);
+                            }
+
+                            function intervalhandler() {
+                                if ($(p.c).parents('body')[0]) { //判断容器是否仍然存在于dom树中。
+                                    //如果在，则执行定时函数。
+                                    timer.do({ container: p.c, data: nearest_datacontainer(p.c).data_of_thin })
+                                } else {
+                                    //如果该节点已经不在文档树中，则解绑所有定时事件。
+                                    p.c.interval.forEach(function(handler) { clearInterval(handler) });
+                                    delete p.c.interval;
+                                };
+                            }
+
+                            function timeouthandler() {
+                                if ($(p.c).parents('body')[0]) { //判断容器是否仍然存在于dom树中。
+                                    timer.do({ container: p.c, data: nearest_datacontainer(p.c).data_of_thin })
+                                } else {}
+                            }
+                        }
+
                     }
 
                     // click 绑定click用户事件处理函数
 
                     if (p.t.click !== undefined) {
-                        element.onclick = function() {
-                            let data_container = nearest_datacontainer(this);
-                            let new_data = {};
-                            if (data_container !== null) {
-                                //获取全部input的值：
-                                $("input", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-                                //获取全部select的值：
-                                $("select", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-                                //获取全部textarea的值：
-                                $("textarea", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-                            }
-                            p.t.click({
-                                sender: this,
-                                org_data: data_container.data_of_thin,
-                                new_data: new_data
-                            });
-                        };
+                        $(element).on('click', function(e) {
+                            console.log(e);
+                            eventprocessor(e, p.t.click);
+                        })
                     }
 
                     //  event 绑定事件侦听器
@@ -285,39 +668,76 @@ $.fn.extend({
                     if (p.t.event !== undefined) {
                         Object.keys(p.t.event).forEach(function(key) {
                             $(element).on(key, function(e) {
-                                let data_container = nearest_datacontainer(this);
-                                let new_data = new Object();
-                                //获取全部input的值：
-                                $("input", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-                                //获取全部select的值：
-                                $("select", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-                                //获取全部textarea的值：
-                                $("textarea", data_container).each(function(i, e) {
-                                    if (this.attributes["name"] !== undefined) {
-                                        let name = this.attributes["name"].value;
-                                        new_data[name] = $(this).val();
-                                    }
-                                });
-
-                                p.t.event[e.type]({
-                                    sender: this,
-                                    type: e.type,
-                                    event: e,
-                                    org_data: data_container.data_of_thin,
-                                    new_data: new_data
-                                });
+                                eventprocessor(e, p.t.event[key]);
                             });
                         });
+                    }
+
+
+
+                    function eventprocessor(e, handler) {
+                        // e.stopPropagation(); // 阻止事件冒泡; 
+                        e.preventDefault(); // 阻止默认行为;
+                        let data_container = nearest_datacontainer(e.target);
+                        let new_data = {};
+                        //获取全部input的值：
+                        $("input,select,textarea", data_container).each(function(i, e) {
+                            if (this.attributes["name"] !== undefined) {
+                                let name = this.attributes["name"].value;
+                                if (!new_data[name]) new_data[name] = $(this).val(); //bugfix: 只取第一个，后续的忽略。
+                            }
+                        });
+
+                        $('*[contenteditable=true]', data_container).each(function(i, e) {
+
+                            if (this.attributes["name"] !== undefined) {
+                                let name = this.attributes["name"].value;
+                                if (!new_data[name]) new_data[name] = $(this).text(); //bugfix: 只取第一个，后续的忽略。
+                            }
+                        });
+
+                        if (typeof handler === 'function') {
+                            handler({
+                                sender: e.currentTarget || e.target,
+                                type: e.type,
+                                event: e,
+                                org_data: data_container.data_of_thin,
+                                new_data: new_data
+                            });
+                        } else if (handler.e) {
+                            if (e.target.nextSibling && e.target.nextSibling.thin_dynflag) {
+                                e.target.nextSibling.remove();
+                            } else if (e.target.lastChild && e.target.lastChild.thin_dynflag) {
+                                e.target.lastChild.remove();
+                            } else {
+                                let freg = document.createDocumentFragment();
+                                $(freg).render({
+                                    data: data_container.data_of_thin,
+                                    template: handler
+                                });
+
+                                freg.firstChild.thin_dynflag = true;
+
+                                if (typeof handler.closeon === 'string') {
+                                    handler.closeon.split(',').forEach(function(ev, i) {
+                                        $(freg.firstChild).on(ev, function(event) {
+                                            $(event.currentTarget).remove();
+                                        });
+                                    })
+                                }
+                                // 添加在哪里？如果指定了after或者before选择器，则添加在指定位置，否则添加在当前元素后面。
+                                if (handler.after) {
+                                    $(handler.after, data_container).after(freg);
+                                } else if (handler.before) {
+                                    $(handler.before, data_container).before(freg);
+                                } else if (handler.in) {
+                                    $(handler.in, data_container).append(freg);
+                                } else {
+                                    $(e.target).append(freg);
+                                }
+                            }
+
+                        }
                     }
 
                     // V1.1
@@ -347,7 +767,9 @@ $.fn.extend({
                     }
 
                     // t 渲染节点的内容
-                    if (p.t.t !== undefined) render_by_templates({ c: element, t: p.t.t });
+                    if (p.t.t) {
+                        render_by_templates({ c: element, t: p.t.t })
+                    };
 
                     //a 设置节点attribute
                     if (p.t.a !== undefined) {
@@ -396,6 +818,7 @@ $.fn.extend({
                             }
                         });
                     }
+                    return element;
                 }
             }
         }
@@ -404,49 +827,16 @@ $.fn.extend({
         //  根据模板串和数据容器生成字符串
         //
         function render_content(p) {
-            var t = p.t;
-            var reg = /\[\[[a-zA-Z0-9\-\./_]*\]\]/gi;
-            var result =
-                typeof t !== "string" ?
-                t :
-                t.replace(reg, function(m) {
-                    //使用正则表达式匹配变量名
-                    //逐个匹配项处理；
-                    var path = m.replace("[[", "").replace("]]", "");
-                    var patharray = path.split("/");
-                    var data_container = nearest_datacontainer(p.c);
-                    for (var i = 0; i < patharray.length; i++) {
-                        if (patharray[i] === "..") {
-                            if (isDOMElement(data_container)) {
-                                data_container = nearest_datacontainer(
-                                    data_container.parentNode
-                                ); //上溯节点
-                            } else {
-                                return m;
-                            }
-                        } else {
-                            if (isDOMElement(data_container)) {
-                                //如果dp是文档节点，则从文档节点中取其包含数据为dp。
-                                if (data_container.data_of_thin === undefined) {
-                                    return m;
-                                } else {
-                                    data_container = data_container.data_of_thin;
-                                }
-                            }
-                            if (data_container === null) {
-                                return null;
-                                //return "";
-                            } else {
-                                data_container = data_container[patharray[i]];
-                            }
-                        }
-                    }
-                    if (data_container === null || data_container === undefined) {
-                        return "";
-                    } else {
-                        return data_container;
-                    }
-                });
+            let result = typeof p.t !== "string" ? p.t.toString() : p.t.replace(/\[\[[a-zA-Z0-9\-\./_]*\]\]/gi, function(m) {
+                // console.log({ p, m })
+                let path = m.replace("[[", "").replace("]]", "");
+                return datarover({ container: p.c, path: path });
+            });
+            // IE正则表达式不支持命名分组，暂时禁用。
+            // result = result.replace(/{{(?<path>[a-zA-Z0-9\-\./_]+)}}/gi, function(m) {
+            //     let path = m.substring(2, m.length - 2);
+            //     return globalrover(path);
+            // });
             return result;
         }
 
@@ -455,10 +845,21 @@ $.fn.extend({
         //
         function nearest_datacontainer(container) {
             while (!container.hasOwnProperty("data_of_thin")) {
-                if (container.parentNode === null) return null;
+                if (!container.parentNode) return null;
                 container = container.parentNode;
             }
             return container;
+        }
+
+        function globalrover(path) {
+            let data = thin.global;
+            let pa = path.split('.');
+            for (let i = 0; i < pa.length; i++) {
+                let key = pa[i]
+                if (!data[key]) return undefined
+                else data = data[key];
+            }
+            return data;
         }
 
         // @param  { any } p  参数
@@ -468,6 +869,10 @@ $.fn.extend({
         function datarover(p) {
             let pa = p.path.split("/"); //路径数组
             let dp = nearest_datacontainer(p.container); //找到最近数据容器
+
+            if (p.path === '.') {
+                return dp.data_of_thin;
+            }
 
             for (let i = 0; i < pa.length; i++) {
                 if (pa[i] === "..") {
@@ -586,7 +991,6 @@ function popDrag(bar, target, callback) {
         currentY: 0,
         flag: false,
         resetPosition: function() {
-            //console.log(this);
             var target_style_left = $(target).css("left");
             var target_style_top = $(target).css("top");
             if (target_style_left !== "auto") {
@@ -636,4 +1040,4 @@ function popDrag(bar, target, callback) {
             return false;
         }
     };
-};
+}
