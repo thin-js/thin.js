@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="../thin.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+
+    <script>
+        $("div#container").render({
+            data: [{
+                lib: "thin.js",
+                author: "eprom2006"
+            }, {
+                lib: "thin.js-1",
+                author: "eprom2006-1"
+            }],
+            template: [{
+                e: "div",
+                t: "lib: [[lib]],author: [[author]]"
+            }, {
+                button: "[[author]]"
+            }]
+        });
+        $("div#container").render({
+            e: "div",
+            t: ["lib: [[lib]],author: [[author]]", {
+                button: '[[author]]'
+            }],
+            data: [{
+                lib: "thin.js",
+                author: "eprom2006"
+            }, {
+                lib: "thin.js-1",
+                author: "eprom2006-1"
+            }],
+        });
+    </script>
+</body>
+
+</html>

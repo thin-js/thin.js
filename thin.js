@@ -249,6 +249,7 @@ $.fn.extend({
         while (f = readyQueue.shift()) { f(); }
 
         function render_by_data(p) {
+            console.log({ pos: 'render_by_data', p: p });
             if (Array.isArray(p.d)) {
                 p.d.forEach(function(d) {
                     render_by_templates({ c: p.c, t: p.t, d: d });
@@ -270,32 +271,36 @@ $.fn.extend({
         }
 
         function render_template(p) {
-            //  p.c : container
-            //  p.d : data
-            //  p.t : template
             let container = p.c;
-            let data = p;
+            let datacontainer = nearest_datacontainer(container);
+            let data = p.d || (datacontainer ? datacontainer.data_of_thin : undefined);
             let template = p.t;
-
-            if (typeof(p.t) === "string") {
+            console.log({
+                pos: 'render_template',
+                p: p,
+                data: data,
+                template: template
+            })
+            if (typeof(template) === "string") {
                 // 模板是字符串的场景
                 let e = document.createDocumentFragment();
-                $(e).append(render_content({ t: p.t, c: p.c }));
+                $(e).append(render_content({ t: template, c: container }));
                 p.c.appendChild(e);
-            } else if (typeof p.t === "object") {
+            } else if (typeof template === "object") {
                 //模板是对象的场景
                 //render_object_template({ c: p.c, t: p.t, d: p.d });
-                render_object_template(p);
-            } else if (typeof(p.t) === "function") {
-                let datacontainer = nearest_datacontainer(p.c);
-                let result = p.t({
-                    container: p.c,
-                    data: p.d || (datacontainer ? datacontainer.data_of_thin : undefined)
+                render_object_template();
+            } else if (typeof(template) === "function") {
+                // let datacontainer = nearest_datacontainer(p.c);
+                let result = template({
+                    container: container,
+                    data: data
+                        //data: p.d || (datacontainer ? datacontainer.data_of_thin : undefined)
                 });
 
-                if (result !== undefined) {
+                if (result) {
                     let e = document.createDocumentFragment();
-                    $(e).append(render_content({ t: result, c: p.c }));
+                    $(e).append(render_content({ t: result, c: container }));
                     p.c.appendChild(e);
                 }
 
@@ -305,17 +310,24 @@ $.fn.extend({
             }
 
 
-            function render_object_template(p) {
-                if (p.t.datapath && !p.d) {
-                    let data = datarover({
-                        container: p.c,
-                        path: p.t.datapath
-                    });
-                    if (data !== null) {
-                        render_by_data({ c: p.c, d: data, t: p.t });
-                    }
+            function render_object_template() {
+                if (template.datapath && !p.d) {
+                    // let data = datarover({
+                    //     container: p.c,
+                    //     path: p.t.datapath
+                    // });
+                    // let data = dataWalker(template.datapath);
+                    // if (data !== null) {
+                    //     render_by_data({ c: p.c, d: data, t: p.t });
+                    // }
+                    render_by_data({ c: container, d: dataWalker(template.datapath), t: template })
+                }
+                if (template.data && !p.d) {
+                    console.log(p)
+                    render_by_data({ c: container, d: p.t.data, t: template })
                 } else {
-                    let data_container = nearest_datacontainer(p.c);
+                    console.log(p)
+                        // let data_container = nearest_datacontainer(p.c);
                     if (p.t.if !== undefined) {
                         template_if();
                     } else if (p.t.switch !== undefined) {
@@ -343,7 +355,19 @@ $.fn.extend({
                     }
 
                     function template_a() {
-                        render_object_template({
+                        // render_object_template({
+                        //     c: p.c,
+                        //     d: p.d,
+                        //     t: {
+                        //         e: 'a',
+                        //         t: p.t.t || p.t.a,
+                        //         a: { href: p.t.a },
+                        //         class: p.t.class,
+                        //         event: p.c.event,
+                        //         click: p.t.click
+                        //     }
+                        // });
+                        render_template({
                             c: p.c,
                             d: p.d,
                             t: {
@@ -440,33 +464,35 @@ $.fn.extend({
 
                     function template_if() {
 
-                        switch (typeof(p.t.if)) {
+                        switch (typeof(template.if)) {
                             case "function":
-                                if (p.t.if({ container: p.c, data: getdata() })) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
-                                else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                                if (p.t.if({ container: p.c, data: getdata() })) render_by_templates({ c: container, t: template.then, d: p.d });
+                                else if (p.t.else) render_by_templates({ c: container, t: template.else, d: p.d });
                                 break;
                             case "string":
-                                let d = p.d || datarover({ path: p.t.if, container: p.c });
-                                if (d) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
-                                else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                                //let d = p.d || datarover({ path: p.t.if, container: p.c });
+                                let d = dataWalker(template.if);
+                                if (d) render_by_templates({ c: container, t: template.then, d: p.d });
+                                else if (p.t.else) render_by_templates({ c: container, t: template.else, d: p.d });
                                 break;
                             default:
-                                if (p.t.if) render_by_templates({ c: p.c, t: p.t.then, d: p.d });
-                                else if (p.t.else) render_by_templates({ c: p.c, t: p.t.else, d: p.d });
+                                if (p.t.if) render_by_templates({ c: container, t: template.then, d: p.d });
+                                else if (p.t.else) render_by_templates({ c: container, t: template.else, d: p.d });
                                 break;
                         }
                     }
 
                     function template_foreach() {
                         let d = null;
-                        if (typeof(p.t.foreach) === 'function') {
+                        if (typeof(template.foreach) === 'function') {
                             d = p.t.foreach({ container: p.c, data: p.d });
-                        } else if (typeof(p.t.foreach) === 'string') {
-                            d = datarover({ container: p.c, path: p.t.foreach });
-                        } else if (Array.isArray(p.t.foreach)) {
-                            d = p.t.foreach
+                        } else if (typeof(template.foreach) === 'string') {
+                            // d = datarover({ container: p.c, path: p.t.foreach });
+                            d = dataWalker(template.foreach)
+                        } else if (Array.isArray(template.foreach)) {
+                            d = template.foreach
                         }
-                        if (d) render_by_data({ c: p.c, d: d, t: p.t.t });
+                        if (d) render_by_data({ c: container, d: d, t: template.t });
                     }
 
                     function template_tab() {
@@ -493,8 +519,8 @@ $.fn.extend({
                             t.t.push(nav);
                         }
 
-                        let ele = render_object_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
-
+                        // let ele = render_object_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
+                        let ele = render_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
                         switchtab();
 
                         function switchtab() {
@@ -534,6 +560,7 @@ $.fn.extend({
                     }
 
                     function template_object() {
+                        console.log({ pos: 'template_object', p: p });
                         // 模板是对象的场景
                         // 语法糖
                         if (!p.t.e) {
@@ -568,11 +595,13 @@ $.fn.extend({
                         let element = document.createElement(p.t.e ? p.t.e : "div");
                         p.c.appendChild(element);
 
-                        if (p.t.data) {
-                            element.data_of_thin = p.t.data;
-                        } else if (p.d !== undefined) {
-                            element.data_of_thin = p.d; //数据附着到当前节点。
-                        }
+                        // if (p.t.data) {
+                        //     element.data_of_thin = p.t.data;
+                        // } else if (p.d !== undefined) {
+                        //     element.data_of_thin = p.d; //数据附着到当前节点。
+                        // }
+
+                        if (p.d) { element.data_of_thin = p.d }
 
                         let data_container = nearest_datacontainer(element);
 
@@ -838,7 +867,8 @@ $.fn.extend({
                 let result = typeof p.t !== "string" ? p.t.toString() : p.t.replace(/\[\[[a-zA-Z0-9\-\./_]*\]\]/gi, function(m) {
                     // console.log({ p, m })
                     let path = m.replace("[[", "").replace("]]", "");
-                    return datarover({ container: p.c, path: path });
+                    // return datarover({ container: p.c, path: path });
+                    return dataWalker(path) || '';
                 });
                 // IE正则表达式不支持命名分组，暂时禁用。
                 // result = result.replace(/{{(?<path>[a-zA-Z0-9\-\./_]+)}}/gi, function(m) {
@@ -870,50 +900,71 @@ $.fn.extend({
                 return data;
             }
 
-            // @param  { any } p  参数
-            //    p.path      { sting } 查找路径
-            //    p.container { HTMLElement } 数据容器
-            // @return { any } 返回查找到的数据数据
-            function datarover(p) {
-                let pa = p.path.split("/"); //路径数组
-                let dp = nearest_datacontainer(p.container); //找到最近数据容器
+            // // @param  { any } p  参数
+            // //    p.path      { sting } 查找路径
+            // //    p.container { HTMLElement } 数据容器
+            // // @return { any } 返回查找到的数据数据
+            // function datarover(p) {
+            //     let pa = p.path.split("/"); //路径数组
+            //     let dp = nearest_datacontainer(p.container); //找到最近数据容器
 
-                if (p.path === '.') {
-                    return dp.data_of_thin;
-                }
+            //     if (p.path === '.') {
+            //         return dp.data_of_thin;
+            //     }
 
+            //     for (let i = 0; i < pa.length; i++) {
+            //         if (pa[i] === "..") {
+            //             if (isDOMElement(dp)) {
+            //                 dp = nearest_datacontainer(dp.parentNode); //上溯到上一个数据容器节
+            //             } else {
+            //                 return null;
+            //             }
+            //         } else {
+            //             if (isDOMElement(dp)) {
+            //                 //如果dp是文档节点，则从文档节点中取其包含数据为dp。
+            //                 if (dp.data_of_thin === undefined) {
+            //                     return null;
+            //                 } else {
+            //                     dp = dp.data_of_thin;
+            //                 }
+            //             }
+            //             if (dp === null) {
+            //                 return null;
+            //             }
+            //             if (pa[i] in dp) {
+            //                 dp = dp[pa[i]];
+            //             } else {
+            //                 return null;
+            //             }
+            //         }
+            //     }
+            //     return dp;
+            // }
+            // // 判断一个对象是否dom element;
+            // function isDOMElement(obj) {
+            //     return !!(obj && typeof window !== "undefined" && (obj === window || obj.nodeType));
+            // }
+
+            function dataWalker(path) {
+                let d = data,
+                    c = nearest_datacontainer(container),
+                    pa = path.split("/"); //路径数组   
                 for (let i = 0; i < pa.length; i++) {
-                    if (pa[i] === "..") {
-                        if (isDOMElement(dp)) {
-                            dp = nearest_datacontainer(dp.parentNode); //上溯到上一个数据容器节
-                        } else {
-                            return null;
-                        }
-                    } else {
-                        if (isDOMElement(dp)) {
-                            //如果dp是文档节点，则从文档节点中取其包含数据为dp。
-                            if (dp.data_of_thin === undefined) {
-                                return null;
-                            } else {
-                                dp = dp.data_of_thin;
-                            }
-                        }
-                        if (dp === null) {
-                            return null;
-                        }
-                        if (pa[i] in dp) {
-                            dp = dp[pa[i]];
-                        } else {
-                            return null;
-                        }
+                    let key = pa[i];
+                    switch (key) {
+                        case ".":
+                            return d
+                            break;
+                        case '..':
+                            c = nearest_datacontainer(c.parentNode);
+                            if (c) { d = c.data_of_thin } else { return null; }
+                            break;
+                        default:
+                            if (key in d) { d = d[key] } else return null;
+                            break;
                     }
                 }
-                return dp;
-            }
-
-            // 判断一个对象是否dom element;
-            function isDOMElement(obj) {
-                return !!(obj && typeof window !== "undefined" && (obj === window || obj.nodeType));
+                return d;
             }
         }
     }
@@ -1049,4 +1100,8 @@ function popDrag(bar, target, callback) {
             return false;
         }
     };
+}
+
+thin.jsonPath = function(obj, path) {
+
 }
