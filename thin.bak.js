@@ -249,7 +249,7 @@ $.fn.extend({
         while (f = readyQueue.shift()) { f(); }
 
         function render_by_data(p) {
-            // console.log({ pos: 'render_by_data', p: p });
+            console.log({ pos: 'render_by_data', p: p });
             if (Array.isArray(p.d)) {
                 p.d.forEach(function(d) {
                     render_by_templates({ c: p.c, t: p.t, d: d });
@@ -275,12 +275,12 @@ $.fn.extend({
             let datacontainer = nearest_datacontainer(container);
             let data = p.d || (datacontainer ? datacontainer.data_of_thin : undefined);
             let template = p.t;
-            // console.log({
-            //     pos: 'render_template',
-            //     p: p,
-            //     data: data,
-            //     template: template
-            // })
+            console.log({
+                pos: 'render_template',
+                p: p,
+                data: data,
+                template: template
+            })
             if (typeof(template) === "string") {
                 // 模板是字符串的场景
                 let e = document.createDocumentFragment();
@@ -289,7 +289,7 @@ $.fn.extend({
             } else if (typeof template === "object") {
                 //模板是对象的场景
                 //render_object_template({ c: p.c, t: p.t, d: p.d });
-                return render_object_template();
+                render_object_template();
             } else if (typeof(template) === "function") {
                 // let datacontainer = nearest_datacontainer(p.c);
                 let result = template({
@@ -311,16 +311,23 @@ $.fn.extend({
 
 
             function render_object_template() {
-                // if (template.hasOwnProperty('datapath') && !p.hasOwnProperty('d')) {
-                if (template.hasOwnProperty('datapath') && !p.d) {
-                    let data = dataWalker(template.datapath);
-                    if (data != null) render_by_data({ c: container, d: data, t: template })
-                } else if (template.hasOwnProperty('data') && !p.hasOwnProperty('d')) {
-                    // console.log(p)
-                    if (template.data != null) render_by_data({ c: container, d: template.data, t: template })
+                if (template.datapath && !p.d) {
+                    // let data = datarover({
+                    //     container: p.c,
+                    //     path: p.t.datapath
+                    // });
+                    // let data = dataWalker(template.datapath);
+                    // if (data !== null) {
+                    //     render_by_data({ c: p.c, d: data, t: p.t });
+                    // }
+                    render_by_data({ c: container, d: dataWalker(template.datapath), t: template })
+                }
+                if (template.data && !p.d) {
+                    console.log(p)
+                    render_by_data({ c: container, d: p.t.data, t: template })
                 } else {
-                    // console.log(p)
-                    // let data_container = nearest_datacontainer(p.c);
+                    console.log(p)
+                        // let data_container = nearest_datacontainer(p.c);
                     if (p.t.if !== undefined) {
                         template_if();
                     } else if (p.t.switch !== undefined) {
@@ -344,7 +351,7 @@ $.fn.extend({
                             return p.t.data
                         } else if (p.data) {
                             return p.data
-                        } else return datacontainer.data_of_thin
+                        } else return data_container.data_of_thin
                     }
 
                     function template_a() {
@@ -501,7 +508,7 @@ $.fn.extend({
                                 if (p.t.tab.nav[key].hashpath) {
                                     nav.a.hashpath = p.t.tab.nav[key].hashpath
                                     nav.click = function(para) {
-                                        // console.log({ click: para })
+                                        console.log({ click: para })
                                         history.pushState(null, null, nav.a.hashpath);
                                         p.t.tab.nav[key].click(para);
                                     }
@@ -514,7 +521,6 @@ $.fn.extend({
 
                         // let ele = render_object_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
                         let ele = render_template({ c: p.c, t: t, d: p.d }); //获取渲染出来的tab元素
-                        // console.log(ele);
                         switchtab();
 
                         function switchtab() {
@@ -554,7 +560,7 @@ $.fn.extend({
                     }
 
                     function template_object() {
-                        // console.log({ pos: 'template_object', p: p });
+                        console.log({ pos: 'template_object', p: p });
                         // 模板是对象的场景
                         // 语法糖
                         if (!p.t.e) {
@@ -595,7 +601,7 @@ $.fn.extend({
                         //     element.data_of_thin = p.d; //数据附着到当前节点。
                         // }
 
-                        if (p.d) element.data_of_thin = p.d;
+                        if (p.d) { element.data_of_thin = p.d }
 
                         let data_container = nearest_datacontainer(element);
 
@@ -689,7 +695,7 @@ $.fn.extend({
 
                         if (p.t.click !== undefined) {
                             $(element).on('click', function(e) {
-                                // console.log(e);
+                                console.log(e);
                                 eventprocessor(e, p.t.click);
                             })
                         }
@@ -709,11 +715,9 @@ $.fn.extend({
                         function eventprocessor(e, handler) {
                             // e.stopPropagation(); // 阻止事件冒泡; 
                             e.preventDefault(); // 阻止默认行为;
-                            console.log(e);
                             let data_container = nearest_datacontainer(e.target);
-                            console.log({ data_container })
                             let new_data = {};
-                            // 获取全部input的值：
+                            //获取全部input的值：
                             $("input,select,textarea", data_container).each(function(i, e) {
                                 if (this.attributes["name"] !== undefined) {
                                     let name = this.attributes["name"].value;
@@ -730,14 +734,6 @@ $.fn.extend({
                             });
 
                             if (typeof handler === 'function') {
-                                console.log({ handler });
-                                console.log({
-                                    sender: e.currentTarget || e.target,
-                                    type: e.type,
-                                    event: e,
-                                    org_data: data_container.data_of_thin,
-                                    new_data: new_data
-                                })
                                 handler({
                                     sender: e.currentTarget || e.target,
                                     type: e.type,
@@ -872,8 +868,7 @@ $.fn.extend({
                     // console.log({ p, m })
                     let path = m.replace("[[", "").replace("]]", "");
                     // return datarover({ container: p.c, path: path });
-                    let value = dataWalker(path, p.c);
-                    return (value !== undefined || value !== null) ? value : '';
+                    return dataWalker(path) || '';
                 });
                 // IE正则表达式不支持命名分组，暂时禁用。
                 // result = result.replace(/{{(?<path>[a-zA-Z0-9\-\./_]+)}}/gi, function(m) {
@@ -888,10 +883,9 @@ $.fn.extend({
             //
             function nearest_datacontainer(container) {
                 while (!container.hasOwnProperty("data_of_thin")) {
-                    if (!container || !container.parentNode) return null;
+                    if (!container.parentNode) return null;
                     container = container.parentNode;
                 }
-                // console.log({ container });
                 return container;
             }
 
@@ -951,9 +945,9 @@ $.fn.extend({
             //     return !!(obj && typeof window !== "undefined" && (obj === window || obj.nodeType));
             // }
 
-            function dataWalker(path, element) {
+            function dataWalker(path) {
                 let d = data,
-                    c = nearest_datacontainer(element || container),
+                    c = nearest_datacontainer(container),
                     pa = path.split("/"); //路径数组   
                 for (let i = 0; i < pa.length; i++) {
                     let key = pa[i];
@@ -962,9 +956,8 @@ $.fn.extend({
                             return d
                             break;
                         case '..':
-                            if (c) c = nearest_datacontainer(c.parentNode);
-                            if (c) d = c.data_of_thin
-                            else return null;
+                            c = nearest_datacontainer(c.parentNode);
+                            if (c) { d = c.data_of_thin } else { return null; }
                             break;
                         default:
                             if (key in d) { d = d[key] } else return null;
