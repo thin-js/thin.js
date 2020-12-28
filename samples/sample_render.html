@@ -1,23 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:wb="http://open.weibo.com/wb">
 
 <head>
-    <script src="https://com.wf.pub/jquery.js"></script>
-    <script src="../thin.js"></script>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
 </head>
 
 <body>
-    <div id="container"></div>
+    <div class="test_container"></div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
 
     <script>
-        $("div#container").render({
-            data: {
-                lib: "thin.js",
-                author: "eprom2006"
-            },
+        var data = {
+            name: 'test1',
+            url: 'www.baidu.com',
+            arr: [{
+                    name: 'test1',
+                    age: 18
+                },
+                {
+                    name: 'test2',
+                    age: 18
+                },
+                {
+                    name: 'test3',
+                    age: 18
+                },
+                {
+                    name: 'test4',
+                    age: 18
+                }
+            ]
+        };
+        // 基本语法
+        $('.test_container').render({
+            data: data,
             template: {
-                e: "div",
-                t: "lib: [[lib]],author: [[author]]"
+                e: 'p',
+                t: 'this is [[name]]'
+            }
+        });
+        // 简化语法
+        $('.test_container').render({
+            data: data,
+            template: {
+                p: 'this is [[name]]'
+            }
+        });
+        // 简化语法对 a 标签的支持
+        $('.test_container').render({
+            data: data,
+            template: {
+                a: 'https://www.baidu.com',
+                attr: {
+                    target: '_blank'
+                },
+                t: '百度'
+            }
+        });
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'div',
+                class: "test_div",
+                t: [
+                    // 字符串模板
+                    'string template [[name]]',
+                    // element模板
+                    {
+                        e: 'p',
+                        t: '[[name]]'
+                    },
+                    // if模板
+                    {
+                        if: function (r) {
+                            return r.data.name === 'test1'
+                        },
+                        then: '真模板',
+                        else: '假模板'
+                    },
+                    // switch case模板
+                    {
+                        switch: "[[name]]",
+                        case: {
+                            'test1': 'template1',
+                            'test2': 'template2',
+                            default: 'default template'
+                        }
+                    },
+                    // 函数模板
+                    function (r) {
+                        console.log(r)
+                        $(r.container).append(r.data.name)
+                    }
+                ]
             }
         });
     </script>
