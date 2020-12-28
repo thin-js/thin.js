@@ -130,27 +130,27 @@ $(selector).render({
 
 对象可以有以下成员
 
-| 成员         | 类型                         | 说明                                          |
-| ------------ | ---------------------------- | --------------------------------------------- |
-| e            | string                       | element 元素标签名                            |
-| t            | string,object,array,function | template 子模板                               |
-| id           | string                       | 标签 id                                       |
-| class        | string                       | 标签类名                                      |
-| name         | string                       | 标签的 name 属性                              |
-| style        | object                       | 行内样式表                                    |
-| width/height | string                       | 元素宽/高（与写在 style 无区别）              |
-| a            | object                       | attribute, html 属性（name、src、href......） |
-| click        | function                     | 点击事件处理函数                              |
-| event        | object                       | 事件处理函数                                  |
-| data         | object                       | 数据                                          |
-| datapath     | string                       | 数据路径                                      |
-| bind         |                              | 双向数据绑定                                  |
-| selected     | string                       | 给select下拉选择框设置默认值                  |
-| value        | string                       | 输入项设置值                                  |
-| options      | string，array，object        | 选项值                                        |
-| timer        | obj                          | 元素绑定定时/延时任务                         |
-| when         | string,function              | 控制渲染                                      |
-| title        | string                       | 生成标题标签                                  |
+| 成员         | 类型                         | 说明                                                                                                         |
+| ------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| e            | string                       | element 元素标签名                                                                                           |
+| t            | string,object,array,function | template 子模板                                                                                              |
+| id           | string                       | 标签 id                                                                                                      |
+| class        | string                       | 标签类名                                                                                                     |
+| name         | string                       | 标签的 name 属性                                                                                             |
+| style        | object                       | 行内样式表                                                                                                   |
+| width/height | string                       | 元素宽/高（与写在 style 无区别）                                                                             |
+| a            | object                       | attribute, html 属性（name、src、href......）                                                                |
+| click        | function                     | 点击事件处理函数                                                                                             |
+| event        | object                       | 事件处理函数                                                                                                 |
+| data         | object                       | 数据                                                                                                         |
+| datapath     | string                       | 数据路径                                                                                                     |
+| bind         |                              | 双向数据绑定                                                                                                 |
+| selected     | string                       | 给select下拉选择框设置默认值                                                                                 |
+| value        | string                       | 输入项设置值                                                                                                 |
+| options      | string，array，object        | 选项值                                                                                                       |
+| timer        | obj                          | 元素绑定定时/延时任务                                                                                        |
+| when         | string,function              | 控制渲染                                                                                                     |
+| title        | string                       | 生成标题标签，当 e=fieldset 时，生成 legend，当 e=field/f1/f2/f3 时在元素内生成 label 标签，e 为其他值是无效 |
 
 #### 2.2.1 element：生成元素属性
 
