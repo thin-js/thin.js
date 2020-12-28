@@ -51,7 +51,7 @@ thin.js:一个羽量级的前端框架，基于 html5+css3+jquery。
 -   添加对 jquery 的引用,thinjs.com 上的版本为 3.4.1，你也可以从其他源引用 jquery。
 
 ```html
-<script src="http://thinjs.com/jquery.js"></script>
+<script src="https://com.wf.pub/jquery.js"></script>
 ```
 
 -   添加对 thin.js 的引用。
@@ -129,27 +129,28 @@ $(selector).render({
 ```
 
 对象可以有以下成员
-| 成员         |             类型             |                                                                                                         说明 |
-| ------------ | :--------------------------: | -----------------------------------------------------------------------------------------------------------: |
-| e            |            string            |                                                                                           element 元素标签名 |
-| t            | string,object,array,function |                                                                                              template 子模板 |
-| id           |            string            |                                                                                                      标签 id |
-| class        |            string            |                                                                                                     标签类名 |
-| name         |            string            |                                                                                             标签的 name 属性 |
-| style        |            object            |                                                                                                   行内样式表 |
-| width/height |            string            |                                                                             元素宽/高（与写在 style 无区别） |
-| a            |            object            |                                                                attribute, html 属性（name、src、href......） |
-| click        |           function           |                                                                                             点击事件处理函数 |
-| event        |            object            |                                                                                                 事件处理函数 |
-| data         |            object            |                                                                                                         数据 |
-| datapath     |            string            |                                                                                                     数据路径 |
-| bind         |                              |                                                                                                 双向数据绑定 |
-| selected     |            string            |                                                            给 select 下拉选择框设置选中值，建议用 value 替代 |
-| value        |            string            |                                                                                                 输入项设置值 |
-| options      |    string，array，object     |                                                                                                       选项值 |
-| timer        |             obj              |                                                                                        元素绑定定时/延时任务 |
-| when         |       string,function        |                                                                                                     控制渲染 |
-| title        |            string            | 生成标题标签，当 e=fieldset 时，生成 legend，当 e=field/f1/f2/f3 时在元素内生成 label 标签，e 为其他值是无效 |
+
+| 成员         | 类型                         | 说明                                          |
+| ------------ | ---------------------------- | --------------------------------------------- |
+| e            | string                       | element 元素标签名                            |
+| t            | string,object,array,function | template 子模板                               |
+| id           | string                       | 标签 id                                       |
+| class        | string                       | 标签类名                                      |
+| name         | string                       | 标签的 name 属性                              |
+| style        | object                       | 行内样式表                                    |
+| width/height | string                       | 元素宽/高（与写在 style 无区别）              |
+| a            | object                       | attribute, html 属性（name、src、href......） |
+| click        | function                     | 点击事件处理函数                              |
+| event        | object                       | 事件处理函数                                  |
+| data         | object                       | 数据                                          |
+| datapath     | string                       | 数据路径                                      |
+| bind         |                              | 双向数据绑定                                  |
+| selected     | string                       | 给select下拉选择框设置默认值                  |
+| value        | string                       | 输入项设置值                                  |
+| options      | string，array，object        | 选项值                                        |
+| timer        | obj                          | 元素绑定定时/延时任务                         |
+| when         | string,function              | 控制渲染                                      |
+| title        | string                       | 生成标题标签                                  |
 
 #### 2.2.1 element：生成元素属性
 
@@ -694,13 +695,13 @@ template 语法与 render 完全一样。
 
 ### 3.2 poplayer 参数成员
 
-| 成员     |   类型   |                                             描述 |
-| -------- | :------: | -----------------------------------------------: |
-| header   |  string  |                                             高度 |
-| width    |  string  |                                             宽度 |
-| data     |          |                                             数据 |
-| template |          |                                             模板 |
-| render   | function |                                     自定义渲染器 |
+| 成员     | 类型     | 描述                                             |
+| -------- | -------- | ------------------------------------------------ |
+| header   | string   | 高度                                             |
+| width    | string   | 宽度                                             |
+| data     |          | 数据                                             |
+| template |          | 模板                                             |
+| render   | function | 自定义渲染器                                     |
 | onclose  | function | 浮层关闭时的回调函数（仅用于浮层右上角按钮关闭） |
 
 ### 3.3 自定义渲染浮层
