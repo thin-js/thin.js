@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // 对象数组的渲染
+        // var objArr = [{
+        //         name: 'name1'
+        //     },
+        //     {
+        //         name: 'name2'
+        //     },
+        //     {
+        //         name: 'name3'
+        //     },
+        //     {
+        //         name: 'name4'
+        //     },
+        // ]
+        // $('.test_container').render({
+        //     data: objArr,
+        //     template: {
+        //         e: 'p',
+        //         t: '[[name]]'
+        //     }
+        // });
+        // 纯数组的渲染
+        var arr = ['name1', 'name2', 'name3', 'name4', 'name5', 'name6'];
+        $('.test_container').render({
+            data: arr,
+            template: {
+                e: 'p',
+                t: '[[.]]'
+            }
+        });
+    </script>
+</body>
+
+</html>

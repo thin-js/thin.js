@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container"></div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // // 自定义渲染浮层
+        // poplayer({
+        //     header: '弹窗',
+        //     render: function (r) {
+        //         console.log(r)
+        //         renderFun(r)
+        //     }
+        // });
+
+        // function renderFun(para) {
+        //     // to render
+        //     console.log(para)
+        // }
+        // // 简单写法
+        // poplayer({
+        //     header: '弹窗',
+        //     render: renderFun
+        // });
+
+        // function renderFun(para) {
+        //     // to render
+        //     console.log(para);
+        //     // para: {
+        //     //     container: 'popbody'
+        //     // }
+        // }
+        var data = {
+            name: 'test1',
+            arr: [{
+                    name: 'test1',
+                    age: 18
+                },
+                {
+                    name: 'test2',
+                    age: 18
+                },
+                {
+                    name: 'test3',
+                    age: 18
+                },
+                {
+                    name: 'test4',
+                    age: 18
+                }
+            ]
+        };
+        $('.test_container').render({
+            template: {
+                e: "button",
+                t: '测试',
+                click: function () {
+                    renderPoplayer();
+                }
+            }
+        })
+
+        function renderPoplayer() {
+            var poplayer1 = poplayer({
+                data: data,
+                header: '弹出框',
+                onclose: function () {
+                    console.log('我关闭了');
+                },
+                template: {
+                    e: 'div',
+                    t: [{
+                        e: 'ul',
+                        t: {
+                            e: 'li',
+                            datapath: "arr",
+                            t: '[[name]][[age]]'
+                        }
+                    }, {
+                        e: "div",
+                        t: {
+                            e: 'button',
+                            t: '关闭',
+                            click: function () {
+                                poplayer1.remove();
+                            }
+                        }
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

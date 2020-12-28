@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+    <style>
+        label {
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        var data = {
+            name: 'wanfang',
+            age: '20'
+        }
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'form',
+                t: [{
+                        e: "label",
+                        t: [
+                            "姓名：",
+                            {
+                                e: 'input',
+                                a: {
+                                    name: "name",
+                                    type: 'text',
+                                    value: '[[name]]'
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        e: "label",
+                        t: [
+                            "年龄：",
+                            {
+                                e: 'input',
+                                a: {
+                                    name: "age",
+                                    type: 'text',
+                                    value: '[[age]]'
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        e: 'button',
+                        a: {
+                            type: "button"
+                        },
+                        t: "提交",
+                        click: function (res) { //因为click事件经常使用，所以不用放在event对象中
+                            console.log(res)
+                            // {
+                            //     event: k.Event {
+                            //         originalEvent: MouseEvent,
+                            //         type: "click",
+                            //         target: button,
+                            //         currentTarget: button,
+                            //         isDefaultPrevented: ƒ,
+                            //         …
+                            //     } 事件
+                            //     new_data: {
+                            //         name: "wanfang",
+                            //         age: "50"
+                            //     } 可认为当前表单要提交的数据
+                            //     org_data: {
+                            //         name: "wanfang",
+                            //         age: "20"
+                            //     } 初始时对表单传入的数据
+                            //     sender: button 事件源
+                            //     type: "click" 事件类型
+                            // }
+                        },
+                        event: {
+                            dbclick: function (res) {
+                                console.log(res);
+                            },
+                            mouseover: function (res) {
+                                console.log(res);
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+    </script>
+</body>
+
+</html>

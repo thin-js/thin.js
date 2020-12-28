@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container"></div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // 动态资源的tab切换
+        $('.test_container').render({
+            data: '',
+            template: [{
+                tab: {
+                    nav: {
+                        nav1: {
+                            // 自动向浏览器添加哈希路由(可选)
+                            // 刷新页面自动调用当前哈希路由的click事件
+                            hashpath: '#nav1',
+                            click: function () {
+                                // 渲染（可异步）
+                                $('#show_container').text(1);
+                            }
+                        },
+                        nav2: {
+                            hashpath: '#nav2',
+                            click: function () {
+                                $('#show_container').text(2);
+                            }
+                        },
+                        nav3: {
+                            hashpath: '#nav3',
+                            click: function () {
+                                $('#show_container').text(3);
+                            }
+                        },
+                        nav4: {
+                            hashpath: '#nav4',
+                            click: function () {
+                                $('#show_container').text(4);
+                            }
+                        }
+                    },
+                    // 默认渲染第几个
+                    // 在哈希路由存在的情况下失效
+                    default: 2
+                }
+            }, {
+                e: 'div',
+                id: 'show_container'
+            }]
+        });
+        // 静态资源tab切换
+        // $('.test_container').render({
+        //     data: '',
+        //     template: [{
+        //         multiview: [{
+        //                 e: 'tab',
+        //                 t: [{
+        //                         e: 'tab-nav',
+        //                         t: 'nav1',
+        //                         a: {
+        //                             class: 'active',
+        //                             view: 'nav1'
+        //                         }
+        //                     },
+        //                     {
+        //                         e: 'tab-nav',
+        //                         t: 'nav2',
+        //                         a: {
+        //                             view: 'nav2'
+        //                         }
+        //                     }
+        //                     // more tab-nav
+        //                 ]
+        //             },
+        //             {
+        //                 e: 'view',
+        //                 t: '1',
+        //                 id: 'nav1',
+        //                 class: 'active'
+        //             },
+        //             {
+        //                 e: 'view',
+        //                 t: '2',
+        //                 id: 'nav2'
+        //             }
+        //             // more view
+        //         ]
+        //     }]
+        // });
+    </script>
+</body>
+
+</html>

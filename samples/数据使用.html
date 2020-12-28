@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // 对象数组的渲染
+        var data = {
+            arr: [{
+                    name: 'name1'
+                },
+                {
+                    name: 'name2'
+                },
+                {
+                    name: 'name3'
+                },
+                {
+                    name: 'name4'
+                }
+            ],
+            newData: {
+                sex: "man",
+                address: "天津市"
+            }
+        }
+        // // datapath 数据绑定
+        // // 渲染的为dapath所在的DOM分支
+        // $('.test_container').render({
+        //     data: data,
+        //     template: {
+        //         e: 'div',
+        //         t: {
+        //             e: 'p',
+        //             datapath: 'arr',
+        //             t: 'this is [[name]]'
+        //         }
+        //     }
+        // });
+
+        // // foreach 数据绑定
+        // // 渲染的为foreach所在的DOM分支的子元素
+        // $('.test_container').render({
+        //     data: data,
+        //     template: {
+        //         e: 'div',
+        //         foreach: 'arr',
+        //         t: {
+        //             e: 'p',
+        //             // datapath: 'arr',
+        //             t: 'this is [[name]]'
+        //         }
+        //     }
+        // });
+        // // 绑定的数据类型为对象时
+        // $('.test_container').render({
+        //     data: data,
+        //     template: {
+        //         e: 'div',
+        //         // foreach: 'newData',
+        //         t: {
+        //             e: 'p',
+        //             datapath: 'newData',
+        //             t: '[[sex]][[address]]'
+        //         }
+        //     }
+        // });
+
+        // element的data属性
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'div',
+                t: {
+                    e: 'p',
+                    data: {
+                        sex: "woman",
+                        address: "北京市"
+                    },
+                    t: '[[sex]][[address]]'
+                }
+            }
+        });
+        var data = {
+            location: {
+                city: '天津'
+            }
+        };
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'div',
+                t: '<p>[[location/city]]</p>'
+            }
+        });
+    </script>
+</body>
+
+</html>

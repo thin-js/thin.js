@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container"></div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        var data = {
+            name: 'test1',
+            url: 'www.baidu.com',
+            arr: [{
+                    name: 'test1',
+                    age: 18,
+                    class: "active",
+                    boolean: true
+                },
+                {
+                    name: 'test2',
+                    age: 18,
+                    boolean: true
+                },
+                {
+                    name: 'test3',
+                    age: 18,
+                    boolean: false
+                },
+                {
+                    name: 'test4',
+                    age: 18,
+                    boolean: true
+                }
+            ]
+        };
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'div',
+                t: {
+                    e: "ul",
+                    foreach: 'arr',
+                    t: {
+                        e: "li",
+                        a: {
+                            class: "[[class]]",
+                            id: function (r) {
+                                if (r.data.boolean) {
+                                    return 'hasId'
+                                } else {
+                                    return ''
+                                }
+                            }
+                        },
+                        t: '[[name]][[age]]'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

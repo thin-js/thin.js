@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // 1.closeon 语法
+        // var testDiv = {
+        //     e: 'div',
+        //     closeon: 'click,mouseover',
+        //     t: {
+        //         e: 'ul',
+        //         t: [{
+        //             e: 'li',
+        //             t: '1'
+        //         }, {
+        //             e: 'li',
+        //             t: '2'
+        //         }, {
+        //             e: 'li',
+        //             t: '3'
+        //         }, {
+        //             e: 'li',
+        //             t: '4'
+        //         }]
+        //     }
+        // }
+        // $('.test_container').render({
+        //     template: {
+        //         e: "div",
+        //         t: "测试",
+        //         click: testDiv
+        //     }
+        // });
+
+
+        // 2.after before in语法
+        var testDiv = {
+            e: 'ul',
+            closeon: 'click', //该点击事件绑定在当前的ul上
+            // in: '.test_div',
+            // before: '.test_div',
+            after: '.test_div',
+            t: [{
+                e: 'li',
+                t: '1'
+            }, {
+                e: 'li',
+                t: '2'
+            }, {
+                e: 'li',
+                t: '3'
+            }, {
+                e: 'li',
+                t: '4'
+            }]
+        }
+        $('.test_container').render({
+            template: {
+                e: "div",
+                t: ['<div class="test_div">我是容器</div>', "测试"],
+                click: testDiv //点击渲染一组DOM树在指定位置
+            }
+        });
+    </script>
+</body>
+
+</html>

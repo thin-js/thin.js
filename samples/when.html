@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // when的使用
+        var obj = {
+            boolen: ''
+        }
+        // when
+        $('.test_container').render({
+            data: obj,
+            template: {
+                e: 'p',
+                t: {
+                    e: 'span',
+                    t: '1111',
+                    // 如果该数据路径值存在且不为空，渲染当前容器；反之不渲染。
+                    // 也可填入布尔值：true渲染；false不渲染
+                    when: 'boolen'
+                    // 也可根据数据进行判断，返回相应渲染结果
+                    // when: function (r) {
+                    //     if (r.data.boolen) {
+                    //         return true;
+                    //     } else {
+                    //         return false;
+                    //     }
+                    // }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        // setInterval
+        var index = 1;
+        $('.test_container').render({
+            template: {
+                e: 'p',
+                t: {
+                    timer: {
+                        interval: 1000,
+                        do: function (r) {
+                            console.log(index);
+                            index++;
+                            if (index > 4) {
+                                $(r.container).remove();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // setTimeout
+        $('.test_container').render({
+            template: {
+                e: 'p',
+                t: {
+                    timer: {
+                        delay: 1000,
+                        do: function (r) {
+                            console.log('我延时了1s');
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

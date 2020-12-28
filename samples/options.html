@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:wb="http://open.weibo.com/wb">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>thin.js</title>
+    <link rel="stylesheet" href="https://com.wf.pub/thin.css" />
+    <style>
+        label {
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test_container">
+
+    </div>
+    <script src="https://com.wf.pub/jquery.js"></script>
+    <script src="https://com.wf.pub/thin.js"></script>
+    <!-- <script src="thin.js"></script> -->
+
+    <script>
+        var data = {
+            name: 'wanfang',
+            age: '20',
+            arr: [{
+                    name: 'XXXXX'
+                },
+                {
+                    name: 'XX大学'
+                },
+                {
+                    name: 'XX中学'
+                }
+            ]
+        }
+        $('.test_container').render({
+            data: data,
+            template: {
+                e: 'form',
+                t: [{
+                        e: "label",
+                        t: [
+                            "姓名：",
+                            {
+                                e: 'input',
+                                a: {
+                                    name: "name",
+                                    type: 'text'
+                                },
+                                bind: 'name'
+                            }
+                        ]
+                    },
+                    {
+                        e: "label",
+                        t: [
+                            "年龄：",
+                            {
+                                e: 'input',
+                                a: {
+                                    name: "age",
+                                    type: 'text'
+                                },
+                                bind: 'age'
+                            }
+                        ]
+                    },
+                    {
+                        e: "label",
+                        t: [
+                            "性别：",
+                            {
+                                e: 'select',
+                                a: {
+                                    name: "sex",
+                                },
+                                // options: '男',
+                                // options: [
+                                //     '男', '女'
+                                // ]
+                                // options: {
+                                //     男: 'man',
+                                //     女: 'woman'
+                                // }
+                                t: [
+                                    '<option value="男">男</option>',
+                                    '<option value="女">女</option>',
+                                    '<option value="妖">妖</option>'
+                                ],
+                                selected: '女',
+                            }
+                        ]
+                    }
+                ]
+            }
+        })
+        // $('select').val('女')
+    </script>
+</body>
+
+</html>
