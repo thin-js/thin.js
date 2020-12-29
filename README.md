@@ -15,10 +15,12 @@
         - [2.2.2.3 使用数据](#2223-使用数据)
         - [2.2.2.4 element 模板的 data 属性](#2224-element-模板的-data-属性)
       - [2.2.3 element 模板：事件处理](#223-element-模板事件处理)
+        - [Q&A](#qa)
       - [2.2.4 element 模板：控制样式](#224-element-模板控制样式)
-    - [2.3 模板：if 结构](#23-模板if-结构)
-    - [2.4 模板：switch case 结构](#24-模板switch-case-结构)
-    - [2.5 模板：函数](#25-模板函数)
+    - [2.3 模板：函数](#23-模板函数)
+        - [Q&A](#qa-1)
+    - [2.4 模板：if 结构](#24-模板if-结构)
+    - [2.5 模板：switch case 结构](#25-模板switch-case-结构)
     - [2.6 组合模板](#26-组合模板)
   - [3. poplayer 弹出层](#3-poplayer-弹出层)
     - [3.1 基本语法](#31-基本语法)
@@ -395,9 +397,9 @@ $(selector).render({
                     type: 'button'
                 },
                 t: '提交',
-                click: function (res) {
+                click: function (para) {
                     //因为click事件经常使用，所以不用放在event对象中
-                    console.log(res);
+                    console.log(para);
                     // {
                     //     event: k.Event {
                     //         originalEvent: MouseEvent,
@@ -420,11 +422,11 @@ $(selector).render({
                     // }
                 },
                 event: {
-                    dbclick: function (res) {
-                        console.log(res);
+                    dbclick: function (para) {
+                        console.log(para);
                     },
-                    mouseover: function (res) {
-                        console.log(res);
+                    mouseover: function (para) {
+                        console.log(para);
                     }
                 }
             }
@@ -435,15 +437,35 @@ $(selector).render({
 
 传入的参数结构
 
-```js
-{
-    sender:{事件源},
-    event:{事件},
-    type:{事件类型},
-    org_data:{原始数据},
-    new_data:{新数据}
-}
-```
+| 名称     | 描述     |
+| -------- | -------- |
+| sender   | 事件源   |
+| event    | 事件     |
+| type     | 事件类型 |
+| org_data | 原始数据 |
+| new_data | 新数据   |
+
+##### Q&A
+1. Q：事件event中function传入的参数结构和函数模板(例：if:function(para){}、when:function(para){}...)中function的参数结构有何区别?
+   
+   A：事件中传入参数结构为：
+    ```js
+    {
+        sender:{事件源},
+        event:{事件},
+        type:{事件类型},
+        org_data:{原始数据},
+        new_data:{新数据}
+    }
+    ```
+    函数模板中传入参数结构为：
+    ```js
+    {
+        container: 当前绑定的容器,
+        data: 当前容器绑定的数据
+    }
+    ```
+    函数模板具体使用情况请参考[2.3 模板：函数](#23-模板函数)
 
 #### 2.2.4 element 模板：控制样式
 
@@ -496,8 +518,8 @@ style 的成员也可是函数，以根据数据生成不同的属性。
 
 ```js
 a:{
-    "font-size":function(p){
-        if(p.data.field===true){
+    "font-size":function(para){
+        if(para.data.field===true){
              return "14px";
         }else{
              return "12px";
@@ -508,7 +530,53 @@ a:{
 
 <font color=#FF0000>注：函数需要返回字符串作为生成的样式的值。</font>
 
-### 2.3 模板：if 结构
+### 2.3 模板：函数
+
+模板可以是一个函数，渲染时会将当前位置的 dom 元素和绑定的数据传递给函数，用户可以编写自己的 javascript 代码进行渲染或其他操作。
+
+```js
+{
+    t: function(para){
+        // some code here.
+        console.log(para)
+    }
+}
+```
+para对象：
+| 成员      | 描述           |
+| --------- | -------------- |
+| container | 当前dom容器    |
+| data      | 容器绑定的数据 |
+例子：
+
+```js
+var data = {
+    name: 'test1'
+};
+$(selector).render({
+    data: data,
+    template: {
+        e: 'div',
+        t: {
+            e: 'div',
+            class: 'test_div',
+            t: function (para) {
+                console.log(para);
+                // {
+                //     container：当前dom容器
+                //     data：当前容器绑定的数据
+                // }
+                $(para.container).text(para.data.name);
+            }
+        }
+    }
+});
+```
+##### Q&A
+1. Q：函数模板中参数para为什么没有org_data、new_data等属性？
+   
+   A：org_data、new_data等属性只有在事件event中才会被function(para){}中的para形参传入，其他函数模板结构均为data，container。
+### 2.4 模板：if 结构
 
 用于根据条件真假决定使用哪个模板。
 
@@ -531,8 +599,8 @@ $(selector).render({
     template: {
         e: 'div',
         t: {
-            if: function (r) {
-                return r.data.name === 'test1';
+            if: function (para) {
+                return para.data.name === 'test1';
             },
             // if: true,
             then: {
@@ -547,19 +615,23 @@ $(selector).render({
     }
 });
 ```
-
-### 2.4 模板：switch case 结构
+para对象：
+| 成员      | 描述           |
+| --------- | -------------- |
+| container | 当前dom容器    |
+| data      | 容器绑定的数据 |
+### 2.5 模板：switch case 结构
 
 switch case 结构
 
 ```js
 {
-   switch:"[[参数]]",
-   case:{
-       "条件1":"template1",
-       "条件2":"template2",
-       default:"default template"
-   }
+    switch:"[[参数]]",
+    case:{
+        "条件1":"template1",
+        "条件2":"template2",
+        default:"default template"
+    }
 }
 ```
 
@@ -579,45 +651,6 @@ $(selector).render({
                 test1: 'template1',
                 test2: 'template2',
                 default: 'default template'
-            }
-        }
-    }
-});
-```
-
-### 2.5 模板：函数
-
-模板可以是一个函数，渲染时会将当前位置的 dom 元素和绑定的数据传递给函数，用户可以编写自己的 javascript 代码进行渲染或其他操作。
-
-```js
-{
-    t: function(para){
-        // some code here.
-        console.log(para)
-    }
-}
-```
-
-例子：
-
-```js
-var data = {
-    name: 'test1'
-};
-$(selector).render({
-    data: data,
-    template: {
-        e: 'div',
-        t: {
-            e: 'div',
-            class: 'test_div',
-            t: function () {
-                console.log(para);
-                // {
-                //     container：当前dom容器
-                //     data：当前容器绑定的数据
-                // }
-                $(para.container).text(para.data.name);
             }
         }
     }
@@ -647,8 +680,8 @@ $(selector).render({
             },
             // if模板
             {
-                if: function (r) {
-                    return r.data.name === 'test1';
+                if: function (para) {
+                    return para.data.name === 'test1';
                 },
                 then: '真模板',
                 else: '假模板'
@@ -663,8 +696,8 @@ $(selector).render({
                 }
             },
             // 函数模板
-            function (r) {
-                $(r.container).append(r.data.name);
+            function (para) {
+                $(para.container).append(para.data.name);
             }
         ]
     }
@@ -697,7 +730,8 @@ template 语法与 render 完全一样。
 
 | 成员     | 类型     | 描述                                             |
 | -------- | -------- | ------------------------------------------------ |
-| header   | string   | 高度                                             |
+| header   | string   | 弹出框头部展示文字                               |
+| height   | string   | 高度                                             |
 | width    | string   | 宽度                                             |
 | data     |          | 数据                                             |
 | template |          | 模板                                             |
@@ -1147,11 +1181,11 @@ $(selector).render({
         t: {
             timer: {
                 interval: 1000,
-                do: function (r) {
+                do: function (para) {
                     console.log(index);
                     index++;
                     if (index > 4) {
-                        $(r.container).remove();
+                        $(para.container).remove();
                     }
                 }
             }
@@ -1171,7 +1205,7 @@ $(selector).render({
         t: {
             timer: {
                 delay: 1000,
-                do: function (r) {
+                do: function (para) {
                     console.log('我延时了1s');
                 }
             }
@@ -1200,8 +1234,8 @@ $(selector).render({
             // 也可填入布尔值：true渲染；false不渲染
             when: 'boolen'
             // 也可根据数据进行判断，返回相应渲染结果
-            // when: function (r) {
-            //     if (r.data.boolen) {
+            // when: function (para) {
+            //     if (para.data.boolen) {
             //         return true;
             //     } else {
             //         return false;
@@ -1211,6 +1245,11 @@ $(selector).render({
     }
 });
 ```
+para参数： 
+| 成员      | 描述       |
+| --------- | ---------- |
+| container | 绑定的容器 |
+| data      | 绑定的数据 |
 <!-- ### 5.5 ajax 写法
 
 ajax 写法在 thin.js 中提供 ajax 请求处理
