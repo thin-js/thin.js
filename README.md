@@ -543,12 +543,13 @@ a:{
 }
 ```
 para对象：
+
 | 成员      | 描述           |
 | --------- | -------------- |
 | container | 当前dom容器    |
 | data      | 容器绑定的数据 |
-例子：
 
+例子：
 ```js
 var data = {
     name: 'test1'
@@ -616,10 +617,12 @@ $(selector).render({
 });
 ```
 para对象：
+
 | 成员      | 描述           |
 | --------- | -------------- |
 | container | 当前dom容器    |
 | data      | 容器绑定的数据 |
+
 ### 2.5 模板：switch case 结构
 
 switch case 结构
@@ -1245,7 +1248,8 @@ $(selector).render({
     }
 });
 ```
-para参数： 
+para参数：
+
 | 成员      | 描述       |
 | --------- | ---------- |
 | container | 绑定的容器 |
