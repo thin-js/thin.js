@@ -170,7 +170,7 @@ $(selector).render({
 
 渲染结果：
 
-```
+```html
 <div id="sampleid" class="sampleclass"></div>
 ```
 
@@ -199,8 +199,8 @@ a 的成员也可是函数，以根据数据生成不同的属性。
 
 ```js
 a:{
-    class: function(para) {
-        if(para.data.field==="a"){
+    class: function(param) {
+        if(param.data.field==="a"){
             return "classa";
         } else{
             return "classb";
@@ -209,7 +209,7 @@ a:{
 }
 ```
 
-传入参数 para 的结构如下：
+传入参数 param 的结构如下：
 
 ```js
 {
@@ -397,9 +397,9 @@ $(selector).render({
                     type: 'button'
                 },
                 t: '提交',
-                click: function (para) {
+                click: function (param) {
                     //因为click事件经常使用，所以不用放在event对象中
-                    console.log(para);
+                    console.log(param);
                     // {
                     //     event: k.Event {
                     //         originalEvent: MouseEvent,
@@ -422,11 +422,11 @@ $(selector).render({
                     // }
                 },
                 event: {
-                    dbclick: function (para) {
-                        console.log(para);
+                    dbclick: function (param) {
+                        console.log(param);
                     },
-                    mouseover: function (para) {
-                        console.log(para);
+                    mouseover: function (param) {
+                        console.log(param);
                     }
                 }
             }
@@ -446,7 +446,7 @@ $(selector).render({
 | new_data | 新数据   |
 
 ##### Q&A
-1. Q：事件event中function传入的参数结构和函数模板(例：if:function(para){}、when:function(para){}...)中function的参数结构有何区别?
+1. Q：事件event中function传入的参数结构和函数模板(例：if:function(param){}、when:function(param){}...)中function的参数结构有何区别?
    
    A：事件中传入参数结构为：
     ```js
@@ -518,8 +518,8 @@ style 的成员也可是函数，以根据数据生成不同的属性。
 
 ```js
 a:{
-    "font-size":function(para){
-        if(para.data.field===true){
+    "font-size":function(param){
+        if(param.data.field===true){
              return "14px";
         }else{
              return "12px";
@@ -536,13 +536,13 @@ a:{
 
 ```js
 {
-    t: function(para){
+    t: function(param){
         // some code here.
-        console.log(para)
+        console.log(param)
     }
 }
 ```
-para对象：
+param对象：
 
 | 成员      | 描述           |
 | --------- | -------------- |
@@ -561,22 +561,22 @@ $(selector).render({
         t: {
             e: 'div',
             class: 'test_div',
-            t: function (para) {
-                console.log(para);
+            t: function (param) {
+                console.log(param);
                 // {
                 //     container：当前dom容器
                 //     data：当前容器绑定的数据
                 // }
-                $(para.container).text(para.data.name);
+                $(param.container).text(param.data.name);
             }
         }
     }
 });
 ```
 ##### Q&A
-1. Q：函数模板中参数para为什么没有org_data、new_data等属性？
+1. Q：函数模板中参数param为什么没有org_data、new_data等属性？
    
-   A：org_data、new_data等属性只有在事件event中才会被function(para){}中的para形参传入，其他函数模板结构均为data，container。
+   A：org_data、new_data等属性只有在事件event中才会被function(param){}中的param形参传入，其他函数模板结构均为data，container。
 ### 2.4 模板：if 结构
 
 用于根据条件真假决定使用哪个模板。
@@ -600,8 +600,8 @@ $(selector).render({
     template: {
         e: 'div',
         t: {
-            if: function (para) {
-                return para.data.name === 'test1';
+            if: function (param) {
+                return param.data.name === 'test1';
             },
             // if: true,
             then: {
@@ -616,7 +616,7 @@ $(selector).render({
     }
 });
 ```
-para对象：
+param对象：
 
 | 成员      | 描述           |
 | --------- | -------------- |
@@ -683,8 +683,8 @@ $(selector).render({
             },
             // if模板
             {
-                if: function (para) {
-                    return para.data.name === 'test1';
+                if: function (param) {
+                    return param.data.name === 'test1';
                 },
                 then: '真模板',
                 else: '假模板'
@@ -699,8 +699,8 @@ $(selector).render({
                 }
             },
             // 函数模板
-            function (para) {
-                $(para.container).append(para.data.name);
+            function (param) {
+                $(param.container).append(param.data.name);
             }
         ]
     }
@@ -748,13 +748,13 @@ template 语法与 render 完全一样。
 ```js
 poplayer({
     header: headertext,
-    render: function (para) {
-        renderFun(para);
+    render: function (param) {
+        renderFun(param);
     }
 });
-function renderFun(para) {
+function renderFun(param) {
     // to render
-    // para结构：
+    // param结构：
     // {
     //     container:{popbodycontainer}
     // }
@@ -768,10 +768,10 @@ poplayer({
     header: headertext,
     render: renderFun
 });
-function renderFun(para) {
+function renderFun(param) {
     // to render
-    console.log(para);
-    // para结构：
+    console.log(param);
+    // param结构：
     // {
     //     container:{popbodycontainer}
     // }
@@ -1184,11 +1184,11 @@ $(selector).render({
         t: {
             timer: {
                 interval: 1000,
-                do: function (para) {
+                do: function (param) {
                     console.log(index);
                     index++;
                     if (index > 4) {
-                        $(para.container).remove();
+                        $(param.container).remove();
                     }
                 }
             }
@@ -1208,7 +1208,7 @@ $(selector).render({
         t: {
             timer: {
                 delay: 1000,
-                do: function (para) {
+                do: function (param) {
                     console.log('我延时了1s');
                 }
             }
@@ -1237,8 +1237,8 @@ $(selector).render({
             // 也可填入布尔值：true渲染；false不渲染
             when: 'boolen'
             // 也可根据数据进行判断，返回相应渲染结果
-            // when: function (para) {
-            //     if (para.data.boolen) {
+            // when: function (param) {
+            //     if (param.data.boolen) {
             //         return true;
             //     } else {
             //         return false;
@@ -1248,7 +1248,7 @@ $(selector).render({
     }
 });
 ```
-para参数：
+param参数：
 
 | 成员      | 描述       |
 | --------- | ---------- |

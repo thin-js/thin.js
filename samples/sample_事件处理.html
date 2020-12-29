@@ -64,8 +64,8 @@
                             type: "button"
                         },
                         t: "提交",
-                        click: function (res) { //因为click事件经常使用，所以不用放在event对象中
-                            console.log(res)
+                        click: function (param) { //因为click事件经常使用，所以不用放在event对象中
+                            console.log(param)
                             // {
                             //     event: k.Event {
                             //         originalEvent: MouseEvent,
@@ -88,11 +88,11 @@
                             // }
                         },
                         event: {
-                            dbclick: function (res) {
-                                console.log(res);
+                            dbclick: function (param) {
+                                console.log(param);
                             },
-                            mouseover: function (res) {
-                                console.log(res);
+                            mouseover: function (param) {
+                                console.log(param);
                             }
                         }
                     }

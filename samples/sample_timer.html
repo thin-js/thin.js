@@ -25,11 +25,11 @@
                 t: {
                     timer: {
                         interval: 1000,
-                        do: function (r) {
+                        do: function (param) {
                             console.log(index);
                             index++;
                             if (index > 4) {
-                                $(r.container).remove();
+                                $(param.container).remove();
                             }
                         }
                     }
@@ -44,7 +44,7 @@
                 t: {
                     timer: {
                         delay: 1000,
-                        do: function (r) {
+                        do: function (param) {
                             console.log('我延时了1s');
                         }
                     }

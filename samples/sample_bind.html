@@ -64,16 +64,16 @@
                             type: "button"
                         },
                         t: "提交",
-                        click: function (res) { //因为click事件经常使用，所以不用放在event对象中
-                            console.log(res);
+                        click: function (param) { //因为click事件经常使用，所以不用放在event对象中
+                            console.log(param);
                             // 如果改变了输入框的值，此时打印org_data为输入框最新的值。说明bind产生效果，改变了原有的data_of_thin
                         },
                         event: {
-                            dbclick: function (res) {
-                                console.log(res);
+                            dbclick: function (param) {
+                                console.log(param);
                             },
-                            mouseover: function (res) {
-                                console.log(res);
+                            mouseover: function (param) {
+                                console.log(param);
                             }
                         }
                     }
