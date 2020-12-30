@@ -37,7 +37,7 @@
     - [4.1 基本语法](#41-基本语法)
     - [4.2 动态渲染](#42-动态渲染)
     - [Q&A](#qa-2)
-  - [5. 简化写法以及最新写法](#5-简化写法以及最新写法)
+  - [5. 简化写法以及补充写法](#5-简化写法以及补充写法)
     - [5.1 简化写法](#51-简化写法)
     - [5.2 handler 写法](#52-handler-写法)
     - [5.3 纯数组的渲染](#53-纯数组的渲染)
@@ -1087,9 +1087,9 @@ function renderFun(param) {
     // }
 }
 ```
-<font style='color:#FF0000'>注：poplayer中render函数不属于函数模板。该函数param传入参数只有popbody容器。</font>
-### 3.4 onclose 回调函数
+<font color=#FF0000>注：poplayer中render函数不属于函数模板。该函数param传入参数只有popbody容器。</font>
 
+### 3.4 onclose 回调函数
 ```js
 var data = {
     name: 'test1',
@@ -1311,7 +1311,7 @@ $(selector).render({
 1. Q：动态渲染中的tab: {}的写法和第五章的简化写法一样么？
    
    A：不一样。动态渲染中的tab: {}为固定语法。
-## 5. 简化写法以及最新写法
+## 5. 简化写法以及补充写法
 
 ### 5.1 简化写法
 
@@ -1352,7 +1352,7 @@ template:{'标签名':'html'}
 
     -   closeon:事件名称（多个事件用,隔开）
 
-        <font color=#FF0000>在哪里写的 closeon，该事件就绑定在哪里</font>
+        **在哪里写的 closeon，该事件就绑定在哪里**
 
 -   after 将 DOM 树添加到指定选择器之后
     -   after: 'selector'
@@ -1360,7 +1360,6 @@ template:{'标签名':'html'}
     -   before: 'selector'
 -   in 将 DOM 树添加到指定选择器之内
     -   in: 'selector'
-
 ```js
 var testDiv = {
     e: 'ul',
@@ -1390,11 +1389,15 @@ var testDiv = {
 $('.test_container').render({
     template: {
         e: 'div',
-        t: ['<div class="test_div">我是容器</div>', '测试'],
-        click: testDiv //点击渲染一组DOM树在指定位置
+        t: ['<div class="test_div">我是容器</div>', {
+            e: 'button',
+            t: 'test',
+            click: testDiv //点击渲染一组DOM树在指定位置
+        }]
     }
 });
 ```
+<font color=#FF0000>虚拟DOM树中第一层DOM必须使用基础写法（{e: '标签名',t: html}）,简化写法目前不被支持（{'标签名':html}）</font>
 
 渲染结果
 
@@ -1451,7 +1454,7 @@ in:
 </div>
 ```
 
-<font color=#FF0000>click 接收的值为一个虚拟 DOM 树的话，会将当前的 DOM 树 append(默认为 apped)到 click 事件绑定的当前 DOM 里</font>
+<font color=#FF0000>click 接收的值为一个虚拟 DOM 树的话，会将当前的 DOM 树 append(默认为 apped)到触发 click 事件的当前 DOM 里</font>
 
 ### 5.3 纯数组的渲染
 
