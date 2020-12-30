@@ -50,7 +50,6 @@
                         }
                     },
                     // 默认渲染第几个
-                    // 在哈希路由存在的情况下失效
                     default: 2
                 }
             }, {
@@ -59,44 +58,45 @@
             }]
         });
         // 静态资源tab切换
-        // $('.test_container').render({
-        //     data: '',
-        //     template: [{
-        //         multiview: [{
-        //                 e: 'tab',
-        //                 t: [{
-        //                         e: 'tab-nav',
-        //                         t: 'nav1',
-        //                         a: {
-        //                             class: 'active',
-        //                             view: 'nav1'
-        //                         }
-        //                     },
-        //                     {
-        //                         e: 'tab-nav',
-        //                         t: 'nav2',
-        //                         a: {
-        //                             view: 'nav2'
-        //                         }
-        //                     }
-        //                     // more tab-nav
-        //                 ]
-        //             },
-        //             {
-        //                 e: 'view',
-        //                 t: '1',
-        //                 id: 'nav1',
-        //                 class: 'active'
-        //             },
-        //             {
-        //                 e: 'view',
-        //                 t: '2',
-        //                 id: 'nav2'
-        //             }
-        //             // more view
-        //         ]
-        //     }]
-        // });
+        $('.test_container').render({
+            data: '',
+            template: [{
+                e: 'multiview',
+                t: [{
+                        e: 'tab',
+                        t: [{
+                                e: 'tab-nav',
+                                t: 'nav1',
+                                a: {
+                                    class: 'active',
+                                    view: 'nav1'
+                                }
+                            },
+                            {
+                                e: 'tab-nav',
+                                t: 'nav2',
+                                a: {
+                                    view: 'nav2'
+                                }
+                            }
+                            // more tab-nav
+                        ]
+                    },
+                    {
+                        e: 'view',
+                        t: '1',
+                        id: 'nav1',
+                        class: 'active'
+                    },
+                    {
+                        e: 'view',
+                        t: '2',
+                        id: 'nav2'
+                    }
+                    // more view
+                ]
+            }]
+        });
     </script>
 </body>
 

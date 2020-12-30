@@ -22,81 +22,41 @@
     <!-- <script src="thin.js"></script> -->
 
     <script>
-        var data = {
-            name: 'wanfang',
-            age: '20',
-            arr: [{
-                    name: 'XXXXX'
-                },
-                {
-                    name: 'XX大学'
-                },
-                {
-                    name: 'XX中学'
-                }
-            ]
-        }
         $('.test_container').render({
-            data: data,
+            // data: data,
             template: {
                 e: 'form',
-                t: [{
-                        e: "label",
-                        t: [
-                            "姓名：",
-                            {
-                                e: 'input',
-                                a: {
-                                    name: "name",
-                                    type: 'text'
-                                },
-                                bind: 'name'
-                            }
-                        ]
-                    },
-                    {
-                        e: "label",
-                        t: [
-                            "年龄：",
-                            {
-                                e: 'input',
-                                a: {
-                                    name: "age",
-                                    type: 'text'
-                                },
-                                bind: 'age'
-                            }
-                        ]
-                    },
-                    {
-                        e: "label",
-                        t: [
-                            "性别：",
-                            {
-                                e: 'select',
-                                a: {
-                                    name: "sex",
-                                },
-                                // options: '男',
-                                // options: [
-                                //     '男', '女'
-                                // ]
-                                // options: {
-                                //     男: 'man',
-                                //     女: 'woman'
-                                // }
-                                t: [
-                                    '<option value="man">男</option>',
-                                    '<option value="woman">女</option>'
-                                ],
-                                selected: 'woman',
-                            }
-                        ]
-                    }
-                ]
+                t: {
+                    e: "label",
+                    t: [
+                        "性别：",
+                        {
+                            e: 'select',
+                            a: {
+                                name: "sex",
+                            },
+                            // 1.string
+                            // options: '男,女',
+                            // 2.array
+                            // options: [
+                            //     '男', '女'
+                            // ]
+                            // 3.object
+                            options: {
+                                男: 'man',
+                                女: 'woman'
+                            },
+                            // 4.普通渲染option标签
+                            // t: [
+                            //     '<option value="man">男</option>',
+                            //     '<option value="woman">女</option>'
+                            // ],
+                            selected: 'woman',
+                        }
+                    ]
+                }
             }
-        })
-        // $('select').val('女')
+        });
     </script>
 </body>
 

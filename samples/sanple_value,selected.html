@@ -24,7 +24,8 @@
     <script>
         var data = {
             name: 'wanfang',
-            age: '20'
+            age: '20',
+            sex: 'woman'
         }
         $('.test_container').render({
             data: data,
@@ -40,7 +41,7 @@
                                     name: "name",
                                     type: 'text'
                                 },
-                                bind: 'name'
+                                value: '[[name]]'
                             }
                         ]
                     },
@@ -54,7 +55,29 @@
                                     name: "age",
                                     type: 'text'
                                 },
-                                bind: 'age'
+                                value: '[[age]]'
+                            }
+                        ]
+                    },
+                    {
+                        e: "label",
+                        t: [
+                            "性别：",
+                            {
+                                e: 'select',
+                                a: {
+                                    name: "sex",
+                                },
+                                options: {
+                                    男: 'man',
+                                    女: 'woman'
+                                },
+                                // t: [
+                                //     '<option value="man">男</option>',
+                                //     '<option value="woman">女</option>'
+                                // ],
+                                // selected: '[[sex]]',
+                                value: '[[sex]]'
                             }
                         ]
                     },

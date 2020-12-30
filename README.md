@@ -12,16 +12,21 @@
       - [2.2.2 element: 使用数据](#222-element-使用数据)
         - [2.2.2.1 render 参数的 data 对象](#2221-render-参数的-data-对象)
         - [2.2.2.2 element 模板的 datapath/foreach 属性](#2222-element-模板的-datapathforeach-属性)
-        - [2.2.2.3 使用数据](#2223-使用数据)
-        - [2.2.2.4 element 模板的 data 属性](#2224-element-模板的-data-属性)
-      - [2.2.3 element 模板：事件处理](#223-element-模板事件处理)
+        - [2.2.2.3 element 模板的 data 属性](#2223-element-模板的-data-属性)
+        - [2.2.2.4 使用数据](#2224-使用数据)
+      - [2.2.3 element 模板：event 事件处理](#223-element-模板event-事件处理)
         - [Q&A](#qa)
-      - [2.2.4 element 模板：控制样式](#224-element-模板控制样式)
+      - [2.2.4 element 模板：style 控制样式](#224-element-模板style-控制样式)
+      - [2.2.5 element 模板：timer 添加定时/延时任务](#225-element-模板timer-添加定时延时任务)
+      - [2.2.6 element 模板：options 添加option选项值](#226-element-模板options-添加option选项值)
+      - [2.2.7 element 模板：value和selected默认值](#227-element-模板value和selected默认值)
+      - [2.2.8 element 模板：bind双向数据绑定](#228-element-模板bind双向数据绑定)
     - [2.3 模板：函数](#23-模板函数)
         - [Q&A](#qa-1)
     - [2.4 模板：if 结构](#24-模板if-结构)
     - [2.5 模板：switch case 结构](#25-模板switch-case-结构)
-    - [2.6 组合模板](#26-组合模板)
+    - [2.6 when 结构](#26-when-结构)
+    - [2.7 组合模板](#27-组合模板)
   - [3. poplayer 弹出层](#3-poplayer-弹出层)
     - [3.1 基本语法](#31-基本语法)
     - [3.2 poplayer 参数成员](#32-poplayer-参数成员)
@@ -31,12 +36,11 @@
   - [4. tab 标签+multiview 多视图切换](#4-tab-标签multiview-多视图切换)
     - [4.1 基本语法](#41-基本语法)
     - [4.2 动态渲染](#42-动态渲染)
+    - [Q&A](#qa-2)
   - [5. 简化写法以及最新写法](#5-简化写法以及最新写法)
     - [5.1 简化写法](#51-简化写法)
     - [5.2 handler 写法](#52-handler-写法)
     - [5.3 纯数组的渲染](#53-纯数组的渲染)
-    - [5.4 timer 写法](#54-timer-写法)
-    - [5.5 when 写法](#55-when-写法)
 
 <!-- /TOC -->
 
@@ -94,10 +98,11 @@ thin.js 目前可以使用以下六种模板：
 
 -   string template
 -   element template
+-   模板函数
 -   if 结构
 -   switch case 结构
--   模板函数
--   前述五种模板组成的数组
+-   when 结构
+-   前述六种模板组成的数组
 
 1. string template 字符串模板
 
@@ -150,7 +155,9 @@ $(selector).render({
 | selected     | string                       | 给select下拉选择框设置默认值                                                                                 |
 | value        | string                       | 输入项设置值                                                                                                 |
 | options      | string，array，object        | 选项值                                                                                                       |
-| timer        | obj                          | 元素绑定定时/延时任务                                                                                        |
+| timer        | object                       | 元素绑定定时/延时任务                                                                                        |
+| if           | string,function              | 控制渲染                                                                                                     |
+| switch case  | string                       | 控制渲染                                                                                                     |
 | when         | string,function              | 控制渲染                                                                                                     |
 | title        | string                       | 生成标题标签，当 e=fieldset 时，生成 legend，当 e=field/f1/f2/f3 时在元素内生成 label 标签，e 为其他值是无效 |
 
@@ -304,7 +311,28 @@ $(selector).render({
 
 两者的区别：datapath 需绑定在需要数据的元素上；foreach 需要绑定在需要数据元素的父元素上。
 
-##### 2.2.2.3 使用数据
+##### 2.2.2.3 element 模板的 data 属性
+
+```js
+// 绑定的数据类型为对象时
+$(selector).render({
+    data: data,
+    template: {
+        e: 'div',
+        // foreach: 'newData',
+        t: {
+            e: 'p',
+            data: {
+                sex: 'woman',
+                address: '北京市'
+            },
+            t: '[[sex]][[address]]'
+        }
+    }
+});
+```
+
+##### 2.2.2.4 使用数据
 
 -   在字符串模板中使用数据漫游器展示数据：
     所有末级模板都一定是字符串模板，我们可以在字符串模板中用双方括号调用数据漫游器从绑定的数据源中取值。
@@ -327,29 +355,7 @@ $(selector).render({
 -   除子模版外，element 模板的 a,style,value,selected 的取值也可以用字符串模板调用数据漫游器生成。
 
 -   在函数模板中使用数据：在函数模板和其他允许使用函数的属性中，thin.js 都会将数据和当前 dom 元素作为参数的成员传递给函数。
-
-##### 2.2.2.4 element 模板的 data 属性
-
-```js
-// 绑定的数据类型为对象时
-$(selector).render({
-    data: data,
-    template: {
-        e: 'div',
-        // foreach: 'newData',
-        t: {
-            e: 'p',
-            data: {
-                sex: 'woman',
-                address: '北京市'
-            },
-            t: '[[sex]][[address]]'
-        }
-    }
-});
-```
-
-#### 2.2.3 element 模板：事件处理
+#### 2.2.3 element 模板：event 事件处理
 
 event : 添加事件侦听器
 
@@ -467,7 +473,7 @@ $(selector).render({
     ```
     函数模板具体使用情况请参考[2.3 模板：函数](#23-模板函数)
 
-#### 2.2.4 element 模板：控制样式
+#### 2.2.4 element 模板：style 控制样式
 
 style : 设置行间样式
 
@@ -517,7 +523,7 @@ width，height 为快捷样式，不用写在 style 里面。
 style 的成员也可是函数，以根据数据生成不同的属性。
 
 ```js
-a:{
+style:{
     "font-size":function(param){
         if(param.data.field===true){
              return "14px";
@@ -530,6 +536,278 @@ a:{
 
 <font color=#FF0000>注：函数需要返回字符串作为生成的样式的值。</font>
 
+#### 2.2.5 element 模板：timer 添加定时/延时任务
+timer 提供 thin 定时/延时功能
+
+定时 setInterval：
+
+```js
+var index = 1;
+$(selector).render({
+    template: {
+        e: 'p',
+        t: {
+            timer: {
+                interval: 1000,
+                do: function (param) {
+                    console.log(index);
+                    index++;
+                    if (index > 4) {
+                        $(param.container).remove();
+                    }
+                }
+            }
+        }
+    }
+});
+```
+
+当定时器绑定的容器被移除时，定时器也会被移除。
+
+延时 setTimeout：
+
+```js
+$(selector).render({
+    template: {
+        e: 'p',
+        t: {
+            timer: {
+                delay: 1000,
+                do: function (param) {
+                    console.log('我延时了1s');
+                }
+            }
+        }
+    }
+});
+```
+#### 2.2.6 element 模板：options 添加option选项值
+options接收三种参数值object、array、string;
+1. object
+```js
+$(selector).render({
+    template: {
+        e: 'form',
+        t: {
+            e: "label",
+            t: [
+                "性别：",
+                {
+                    e: 'select',
+                    a: {
+                        name: "sex",
+                    },
+                    options: {
+                        男: 'man',
+                        女: 'woman'
+                    }
+                }
+            ]
+        }
+    }
+});
+```
+object的key为option标签的text；object的value为option标签的value值。
+
+渲染结果：
+```html
+<form>
+    <label>性别：
+        <select name="sex">
+            <option value='man'>男</option>
+            <option value='woman'>女</option>
+        </select>
+    </label>
+</form>
+```
+2. array
+```js
+$(selector).render({
+    template: {
+        e: 'form',
+        t: {
+            e: "label",
+            t: [
+                "性别：",
+                {
+                    e: 'select',
+                    a: {
+                        name: "sex",
+                    },
+                    options: [
+                        '男','女'
+                    ]
+                }
+            ]
+        }
+    }
+});
+```
+该方法只渲染option标签的text属性（不建议使用）。
+
+渲染结果：
+```html
+<form>
+    <label>性别：
+        <select name="sex">
+            <option>男</option>
+            <option>女</option>
+        </select>
+    </label>
+</form>
+```
+3. string
+```js
+$(selector).render({
+    template: {
+        e: 'form',
+        t: {
+            e: "label",
+            t: [
+                "性别：",
+                {
+                    e: 'select',
+                    a: {
+                        name: "sex",
+                    },
+                    options: '男,女'
+                }
+            ]
+        }
+    }
+});
+```
+该方法只渲染option标签的text属性（不建议使用）。
+
+渲染结果：
+```html
+<form>
+    <label>性别：
+        <select name="sex">
+            <option>男</option>
+            <option>女</option>
+        </select>
+    </label>
+</form>
+```
+#### 2.2.7 element 模板：value和selected默认值
+value和selected可以给input和select标签默认值。
+```js
+var data = {
+    name: 'wanfang',
+    age: '20',
+    sex: 'woman'
+};
+$(selector).render({
+    data: data,
+    template: {
+        e: 'form',
+        t: [{
+                e: "label",
+                t: [
+                    "姓名：",
+                    {
+                        e: 'input',
+                        a: {
+                            name: "name",
+                            type: 'text'
+                        },
+                        value: '[[name]]'
+                    }
+                ]
+            },
+            {
+                e: "label",
+                t: [
+                    "年龄：",
+                    {
+                        e: 'input',
+                        a: {
+                            name: "age",
+                            type: 'text'
+                        },
+                        value: '[[age]]'
+                    }
+                ]
+            },
+            {
+                e: "label",
+                t: [
+                    "性别：",
+                    {
+                        e: 'select',
+                        a: {
+                            name: "sex",
+                        },
+                        options: {
+                            男: 'man',
+                            女: 'woman'
+                        },
+                        // 对于select标签来说selected和value都可以
+                        // selected: '[[sex]]',
+                        value: '[[sex]]'
+                    }
+                ]
+            }
+        ]
+    }
+});
+```
+#### 2.2.8 element 模板：bind双向数据绑定
+正常情况下事件中打印的org_data永远是传入的绑定数据data。
+如果在element模板中使用了bind属性指定了数据路径，则在元素渲染时可以将相应的数据作为dom元素的值渲染出来，同时当dom元素的值发生变化时，thin.js也会用onchange事件捕获，并根据数据路径反向将数据自动更新到数据源中。
+```js
+var data = {
+    name: 'wanfang',
+    age: '20'
+};
+$(selector).render({
+    data: data,
+    template: {
+        e: 'form',
+        t: [{
+                e: "label",
+                t: [
+                    "姓名：",
+                    {
+                        e: 'input',
+                        a: {
+                            name: "name",
+                            type: 'text'
+                        },
+                        bind: 'name'
+                    }
+                ]
+            },
+            {
+                e: "label",
+                t: [
+                    "年龄：",
+                    {
+                        e: 'input',
+                        a: {
+                            name: "age",
+                            type: 'text'
+                        },
+                        bind: 'age'
+                    }
+                ]
+            },
+            {
+                e: 'button',
+                a: {
+                    type: "button"
+                },
+                t: "提交",
+                click: function (param) { //因为click事件经常使用，所以不用放在event对象中
+                    console.log(param);
+                    // 如果改变了输入框的值，此时打印org_data为输入框最新的值。说明bind产生效果，改变了原有的data_of_thin
+                }
+            }
+        ]
+    }
+});
+```
 ### 2.3 模板：函数
 
 模板可以是一个函数，渲染时会将当前位置的 dom 元素和绑定的数据传递给函数，用户可以编写自己的 javascript 代码进行渲染或其他操作。
@@ -659,8 +937,40 @@ $(selector).render({
     }
 });
 ```
+### 2.6 when 结构
+when写法可以根据传入的值控制容器是否渲染。也可根据传入的函数进行判断，然会相应是否渲染的值。
+```js
+// when的使用
+var obj = {
+    // boolen: ''
+    // boolen: '值'
+    boolen: true
+}
+// when
+$(selector).render({
+    data: obj,
+    template: {
+        e: 'p',
+        t: {
+            e: 'span',
+            t: 'test',
+            // 如果该数据路径值存在且不为空，渲染当前容器；反之不渲染。
+            // 也可填入布尔值：true渲染；false不渲染
+            when: 'boolen'
+            // 也可根据数据进行判断，返回相应渲染结果
+            // when: function (r) {
+            //     if (r.data.boolen) {
+            //         return true;
+            //     } else {
+            //         return false;
+            //     }
+            // }
+        }
+    }
+});
+```
 
-### 2.6 组合模板
+### 2.7 组合模板
 
 由前述五种模板组成的数组
 
@@ -777,7 +1087,7 @@ function renderFun(param) {
     // }
 }
 ```
-
+<font style='color:#FF0000'>注：poplayer中render函数不属于函数模板。该函数param传入参数只有popbody容器。</font>
 ### 3.4 onclose 回调函数
 
 ```js
@@ -963,7 +1273,6 @@ $(selector).render({
                     }
                 },
                 // 默认渲染第几个
-                // 在哈希路由存在的情况下失效
                 default: 2
             }
         },
@@ -993,12 +1302,15 @@ $(selector).render({
 
 ```js
 {
-    default: '默认渲染第几个导航(在哈希路由存在的情况下失效)',
+    default: '默认渲染第几个导航',
     hashpath: '给tab-nav添加哈希路由',
     click: '点击事件，在点击事件里面动态渲染内容'
 }
 ```
-
+### Q&A
+1. Q：动态渲染中的tab: {}的写法和第五章的简化写法一样么？
+   
+   A：不一样。动态渲染中的tab: {}为固定语法。
 ## 5. 简化写法以及最新写法
 
 ### 5.1 简化写法
@@ -1169,91 +1481,6 @@ $('.test_container').render({
     <p>name6</p>
 </div>
 ```
-
-### 5.4 timer 写法
-
-timer 提供 thin 定时/延时功能
-
-定时 setInterval：
-
-```js
-var index = 1;
-$(selector).render({
-    template: {
-        e: 'p',
-        t: {
-            timer: {
-                interval: 1000,
-                do: function (param) {
-                    console.log(index);
-                    index++;
-                    if (index > 4) {
-                        $(param.container).remove();
-                    }
-                }
-            }
-        }
-    }
-});
-```
-
-当定时器绑定的容器被移除时，定时器也会被移除。
-
-延时 setTimeout：
-
-```js
-$(selector).render({
-    template: {
-        e: 'p',
-        t: {
-            timer: {
-                delay: 1000,
-                do: function (param) {
-                    console.log('我延时了1s');
-                }
-            }
-        }
-    }
-});
-```
-### 5.5 when 写法
-when写法可以根据传入的值控制容器是否渲染。也可根据传入的函数进行判断，然会相应是否渲染的值。
-```js
-// when的使用
-var obj = {
-    // boolen: ''
-    // boolen: '值'
-    boolen: true
-}
-// when
-$(selector).render({
-    data: obj,
-    template: {
-        e: 'p',
-        t: {
-            e: 'span',
-            t: 'test',
-            // 如果该数据路径值存在且不为空，渲染当前容器；反之不渲染。
-            // 也可填入布尔值：true渲染；false不渲染
-            when: 'boolen'
-            // 也可根据数据进行判断，返回相应渲染结果
-            // when: function (param) {
-            //     if (param.data.boolen) {
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // }
-        }
-    }
-});
-```
-param参数：
-
-| 成员      | 描述       |
-| --------- | ---------- |
-| container | 绑定的容器 |
-| data      | 绑定的数据 |
 <!-- ### 5.5 ajax 写法
 
 ajax 写法在 thin.js 中提供 ajax 请求处理
