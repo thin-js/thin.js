@@ -227,7 +227,7 @@ a:{
 
 ##### 2.2.1.2 常用属性快捷方式
 
-id,name,class 因为经常被使用到，所以可以直接在 element 中用相应的属性设置，但是取值不允许使用函数或者数据漫游器，如果需要根据数据决定取值，请使用 a 属性的成员进行设置。
+id,name,class 因为经常被使用到，所以可以直接在 element 中用相应的属性设置，<font color=FF000>但是取值不允许使用函数或者数据漫游器，如果需要根据数据决定取值，请使用 a 属性的成员进行设置。</font>
 
 #### 2.2.2 element: 使用数据
 
@@ -1386,7 +1386,7 @@ var testDiv = {
         }
     ]
 };
-$('.test_container').render({
+$(selector).render({
     template: {
         e: 'div',
         t: ['<div class="test_div">我是容器</div>', {
@@ -1454,7 +1454,7 @@ in:
 </div>
 ```
 
-<font color=#FF0000>click 接收的值为一个虚拟 DOM 树的话，会将当前的 DOM 树 append(默认为 apped)到触发 click 事件的当前 DOM 里</font>
+<font color=#FF0000>click 接收的值为一个虚拟 DOM 树的话，会将当前的 DOM 树 append(默认为 append)到触发 click 事件的当前 DOM 里</font>
 
 ### 5.3 纯数组的渲染
 
