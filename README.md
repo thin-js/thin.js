@@ -6,27 +6,29 @@
   - [2. render 渲染器和模板](#2-render-渲染器和模板)
     - [2.1 基本语法](#21-基本语法)
     - [2.2 模板 template](#22-模板-template)
-      - [2.2.1 element：生成元素属性](#221-element生成元素属性)
-        - [2.2.1.1 使用函数生成属性值](#2211-使用函数生成属性值)
-        - [2.2.1.2 常用属性快捷方式](#2212-常用属性快捷方式)
-      - [2.2.2 element: 使用数据](#222-element-使用数据)
-        - [2.2.2.1 render 参数的 data 对象](#2221-render-参数的-data-对象)
-        - [2.2.2.2 element 模板的 datapath/foreach 属性](#2222-element-模板的-datapathforeach-属性)
-        - [2.2.2.3 element 模板的 data 属性](#2223-element-模板的-data-属性)
-        - [2.2.2.4 使用数据](#2224-使用数据)
-      - [2.2.3 element 模板：event 事件处理](#223-element-模板event-事件处理)
-        - [Q&A](#qa)
-      - [2.2.4 element 模板：style 控制样式](#224-element-模板style-控制样式)
-      - [2.2.5 element 模板：timer 添加定时/延时任务](#225-element-模板timer-添加定时延时任务)
-      - [2.2.6 element 模板：options 添加option选项值](#226-element-模板options-添加option选项值)
-      - [2.2.7 element 模板：value和selected默认值](#227-element-模板value和selected默认值)
-      - [2.2.8 element 模板：bind双向数据绑定](#228-element-模板bind双向数据绑定)
-    - [2.3 模板：函数](#23-模板函数)
-        - [Q&A](#qa-1)
-    - [2.4 模板：if 结构](#24-模板if-结构)
-    - [2.5 模板：switch case 结构](#25-模板switch-case-结构)
-    - [2.6 when 结构](#26-when-结构)
-    - [2.7 组合模板](#27-组合模板)
+      - [2.2.1 string template 字符串模板](#221-string-template-字符串模板)
+      - [2.2.2 element template](#222-element-template)
+        - [2.2.2.1 element：生成元素属性](#2221-element生成元素属性)
+          - [2.2.1.1.1 使用函数生成属性值](#22111-使用函数生成属性值)
+          - [2.2.1.1.2 常用属性快捷方式](#22112-常用属性快捷方式)
+        - [2.2.2.2 element: 使用数据](#2222-element-使用数据)
+          - [2.2.2.2.1 render 参数的 data 对象](#22221-render-参数的-data-对象)
+          - [2.2.2.2.2 element 模板的 datapath/foreach 属性](#22222-element-模板的-datapathforeach-属性)
+          - [2.2.2.2.3 element 模板的 data 属性](#22223-element-模板的-data-属性)
+          - [2.2.2.2.4 使用数据](#22224-使用数据)
+        - [2.2.2.3 element 模板：event 事件处理](#2223-element-模板event-事件处理)
+          - [Q&A](#qa)
+        - [2.2.2.4 element 模板：style 控制样式](#2224-element-模板style-控制样式)
+        - [2.2.2.5 element 模板：timer 添加定时/延时任务](#2225-element-模板timer-添加定时延时任务)
+        - [2.2.2.6 element 模板：options 添加option选项值](#2226-element-模板options-添加option选项值)
+        - [2.2.2.7 element 模板：value和selected默认值](#2227-element-模板value和selected默认值)
+        - [2.2.2.8 element 模板：bind双向数据绑定](#2228-element-模板bind双向数据绑定)
+      - [2.2.3 模板：函数](#223-模板函数)
+          - [Q&A](#qa-1)
+      - [2.2.4 模板：if 结构](#224-模板if-结构)
+      - [2.2.5 模板：switch case 结构](#225-模板switch-case-结构)
+      - [2.2.6 when 结构](#226-when-结构)
+      - [2.2.7 组合模板](#227-组合模板)
   - [3. poplayer 弹出层](#3-poplayer-弹出层)
     - [3.1 基本语法](#31-基本语法)
     - [3.2 poplayer 参数成员](#32-poplayer-参数成员)
@@ -104,7 +106,7 @@ thin.js 目前可以使用以下六种模板：
 -   when 结构
 -   前述六种模板组成的数组
 
-1. string template 字符串模板
+#### 2.2.1 string template 字符串模板
 
 ```js
 var data = {
@@ -117,7 +119,7 @@ $(selector).render({
 });
 ```
 
-2. element template
+#### 2.2.2 element template
 
 element 模板本质上是一个包含"e"属性成员的 javascript 对象，可以根据 e 指定的 element name 生成 html 元素，并设置属性、样式、绑定数据、事件。
 
@@ -151,6 +153,7 @@ $(selector).render({
 | event        | object                       | 事件处理函数                                                                                                 |
 | data         | object                       | 数据                                                                                                         |
 | datapath     | string                       | 数据路径                                                                                                     |
+| foreach      | string                       | 数据循环                                                                                                     |
 | bind         |                              | 双向数据绑定                                                                                                 |
 | selected     | string                       | 给select下拉选择框设置默认值                                                                                 |
 | value        | string                       | 输入项设置值                                                                                                 |
@@ -161,7 +164,7 @@ $(selector).render({
 | when         | string,function              | 控制渲染                                                                                                     |
 | title        | string                       | 生成标题标签，当 e=fieldset 时，生成 legend，当 e=field/f1/f2/f3 时在元素内生成 label 标签，e 为其他值是无效 |
 
-#### 2.2.1 element：生成元素属性
+##### 2.2.2.1 element：生成元素属性
 
 在 element 模板中可以用 a 属性来控制渲染出的 dom element 的属性。
 
@@ -198,7 +201,7 @@ a:{
 }
 ```
 
-##### 2.2.1.1 使用函数生成属性值
+###### 2.2.1.1.1 使用函数生成属性值
 
 a 的成员也可是函数，以根据数据生成不同的属性。
 
@@ -225,11 +228,11 @@ a:{
 }
 ```
 
-##### 2.2.1.2 常用属性快捷方式
+###### 2.2.1.1.2 常用属性快捷方式
 
 id,name,class 因为经常被使用到，所以可以直接在 element 中用相应的属性设置，<font color=FF000>但是取值不允许使用函数或者数据漫游器，如果需要根据数据决定取值，请使用 a 属性的成员进行设置。</font>
 
-#### 2.2.2 element: 使用数据
+##### 2.2.2.2 element: 使用数据
 
 在 thin.js 中可以用以下三种方式将数据源绑定到模板。
 
@@ -237,7 +240,7 @@ id,name,class 因为经常被使用到，所以可以直接在 element 中用相
 2. element 模板的 datapath/foreach 属性
 3. element 模板的 data 属性
 
-##### 2.2.2.1 render 参数的 data 对象
+###### 2.2.2.2.1 render 参数的 data 对象
 
 给模板提供数据最常用的方式是作为 render 的参数的 data 成员传入。
 
@@ -248,7 +251,7 @@ $(selector).render({
 });
 ```
 
-##### 2.2.2.2 element 模板的 datapath/foreach 属性
+###### 2.2.2.2.2 element 模板的 datapath/foreach 属性
 
 datapath:
 
@@ -311,7 +314,7 @@ $(selector).render({
 
 两者的区别：datapath 需绑定在需要数据的元素上；foreach 需要绑定在需要数据元素的父元素上。
 
-##### 2.2.2.3 element 模板的 data 属性
+###### 2.2.2.2.3 element 模板的 data 属性
 
 ```js
 // 绑定的数据类型为对象时
@@ -332,7 +335,7 @@ $(selector).render({
 });
 ```
 
-##### 2.2.2.4 使用数据
+###### 2.2.2.2.4 使用数据
 
 -   在字符串模板中使用数据漫游器展示数据：
     所有末级模板都一定是字符串模板，我们可以在字符串模板中用双方括号调用数据漫游器从绑定的数据源中取值。
@@ -355,7 +358,7 @@ $(selector).render({
 -   除子模版外，element 模板的 a,style,value,selected 的取值也可以用字符串模板调用数据漫游器生成。
 
 -   在函数模板中使用数据：在函数模板和其他允许使用函数的属性中，thin.js 都会将数据和当前 dom 元素作为参数的成员传递给函数。
-#### 2.2.3 element 模板：event 事件处理
+##### 2.2.2.3 element 模板：event 事件处理
 
 event : 添加事件侦听器
 
@@ -451,7 +454,7 @@ $(selector).render({
 | org_data | 原始数据 |
 | new_data | 新数据   |
 
-##### Q&A
+###### Q&A
 1. Q：事件event中function传入的参数结构和函数模板(例：if:function(param){}、when:function(param){}...)中function的参数结构有何区别?
    
    A：事件中传入参数结构为：
@@ -473,7 +476,7 @@ $(selector).render({
     ```
     函数模板具体使用情况请参考[2.3 模板：函数](#23-模板函数)
 
-#### 2.2.4 element 模板：style 控制样式
+##### 2.2.2.4 element 模板：style 控制样式
 
 style : 设置行间样式
 
@@ -536,7 +539,7 @@ style:{
 
 <font color=#FF0000>注：函数需要返回字符串作为生成的样式的值。</font>
 
-#### 2.2.5 element 模板：timer 添加定时/延时任务
+##### 2.2.2.5 element 模板：timer 添加定时/延时任务
 timer 提供 thin 定时/延时功能
 
 定时 setInterval：
@@ -581,7 +584,7 @@ $(selector).render({
     }
 });
 ```
-#### 2.2.6 element 模板：options 添加option选项值
+##### 2.2.2.6 element 模板：options 添加option选项值
 options接收三种参数值object、array、string;
 1. object
 ```js
@@ -690,7 +693,7 @@ $(selector).render({
     </label>
 </form>
 ```
-#### 2.2.7 element 模板：value和selected默认值
+##### 2.2.2.7 element 模板：value和selected默认值
 value和selected可以给input和select标签默认值。
 ```js
 var data = {
@@ -753,7 +756,7 @@ $(selector).render({
     }
 });
 ```
-#### 2.2.8 element 模板：bind双向数据绑定
+##### 2.2.2.8 element 模板：bind双向数据绑定
 正常情况下事件中打印的org_data永远是传入的绑定数据data。
 如果在element模板中使用了bind属性指定了数据路径，则在元素渲染时可以将相应的数据作为dom元素的值渲染出来，同时当dom元素的值发生变化时，thin.js也会用onchange事件捕获，并根据数据路径反向将数据自动更新到数据源中。
 ```js
@@ -808,7 +811,7 @@ $(selector).render({
     }
 });
 ```
-### 2.3 模板：函数
+#### 2.2.3 模板：函数
 
 模板可以是一个函数，渲染时会将当前位置的 dom 元素和绑定的数据传递给函数，用户可以编写自己的 javascript 代码进行渲染或其他操作。
 
@@ -851,11 +854,11 @@ $(selector).render({
     }
 });
 ```
-##### Q&A
+###### Q&A
 1. Q：函数模板中参数param为什么没有org_data、new_data等属性？
    
    A：org_data、new_data等属性只有在事件event中才会被function(param){}中的param形参传入，其他函数模板结构均为data，container。
-### 2.4 模板：if 结构
+#### 2.2.4 模板：if 结构
 
 用于根据条件真假决定使用哪个模板。
 
@@ -901,7 +904,7 @@ param对象：
 | container | 当前dom容器    |
 | data      | 容器绑定的数据 |
 
-### 2.5 模板：switch case 结构
+#### 2.2.5 模板：switch case 结构
 
 switch case 结构
 
@@ -937,7 +940,7 @@ $(selector).render({
     }
 });
 ```
-### 2.6 when 结构
+#### 2.2.6 when 结构
 when写法可以根据传入的值控制容器是否渲染。也可根据传入的函数进行判断，然会相应是否渲染的值。
 ```js
 // when的使用
@@ -970,7 +973,7 @@ $(selector).render({
 });
 ```
 
-### 2.7 组合模板
+#### 2.2.7 组合模板
 
 由前述五种模板组成的数组
 
