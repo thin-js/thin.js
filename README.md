@@ -475,6 +475,58 @@ $(selector).render({
     }
     ```
     函数模板具体使用情况请参考[2.3 模板：函数](#23-模板函数)
+2. Q：为什么有的时候new_data里面没有值，是个空对象？
+
+   A：可能的情况：
+
+    ⑴. 因为最外层template是一个数组，数据绑定时不确定绑定在哪一个父容器上。
+    例如： 
+    ```js
+    template: [
+        {
+            e: 'field',
+            t: [
+                {
+                    label: '资源分组'
+                },
+                {
+                    e: 'input',
+                    a: {
+                        name: 'scope'
+                    }
+                }
+            ]
+        },
+        {
+            e: 'field',
+            t: [
+                {
+                    label: '参考价格'
+                },
+                {
+                    e: 'input',
+                    a: {
+                        name: 'price'
+                    }
+                }
+            ]
+        },
+        {
+            e: 'div',
+            t: [
+                {
+                    e: 'button',
+                    t: '确定',
+                    click: function (param) {
+                        // 此时打印的param中的new_data就为空对象。
+                        console.log(param);
+                    }
+                }
+            ]
+        }
+    ]
+    ```
+    ⑵. 表单里的input、textarea、select等表单元素没有name属性。
 
 ##### 2.2.2.4 element 模板：style 控制样式
 
