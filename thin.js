@@ -753,16 +753,26 @@ $.fn.extend({
 
                         function eventprocessor(e, handler) {
                             // e.stopPropagation(); // 阻止事件冒泡;
-                            e.preventDefault(); // 阻止默认行为;
+                            // 防止keydown事件被阻止，导致的输入框被禁止
+                            if (e.type != 'keydown') {
+                                e.preventDefault(); // 阻止默认行为;
+                            }
                             // console.log(e);
                             let data_container = nearest_datacontainer(e.target);
                             // console.log({ data_container })
                             let new_data = {};
+                            let checkValue = [];
                             // 获取全部input的值：
                             $('input,select,textarea', data_container).each(function (i, e) {
                                 if (this.attributes['name'] !== undefined) {
                                     let name = this.attributes['name'].value;
-                                    if (!new_data[name]) new_data[name] = $(this).val(); //bugfix: 只取第一个，后续的忽略。
+                                    // 改善对checkbox的支持
+                                    if (this.attributes['type'].value === 'checkbox') {
+                                        checkValue.push($(this).val());
+                                        if (!new_data[name]) new_data[name] = checkValue;
+                                    } else {
+                                        if (!new_data[name]) new_data[name] = $(this).val(); //bugfix: 只取第一个，后续的忽略。
+                                    }
                                 }
                             });
 
