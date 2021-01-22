@@ -767,8 +767,12 @@ $.fn.extend({
                                 if (this.attributes['name'] !== undefined) {
                                     let name = this.attributes['name'].value;
                                     // 改善对checkbox的支持
-                                    if (this.attributes['type'].value === 'checkbox') {
-                                        checkValue.push($(this).val());
+                                    if (this.attributes['type'] && this.attributes['type'].value === 'checkbox') {
+                                        if ($(this).is(':checked')) {
+                                            checkValue.push($(this).val());
+                                        } else {
+                                            checkValue = '';
+                                        }
                                         if (!new_data[name]) new_data[name] = checkValue;
                                     } else {
                                         if (!new_data[name]) new_data[name] = $(this).val(); //bugfix: 只取第一个，后续的忽略。
