@@ -771,7 +771,7 @@ $.fn.extend({
                                         if ($(this).is(':checked')) {
                                             checkValue.push($(this).val());
                                         } else {
-                                            checkValue = '';
+                                            checkValue = [];
                                         }
                                         if (!new_data[name]) new_data[name] = checkValue;
                                     } else {
