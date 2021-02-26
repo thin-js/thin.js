@@ -544,21 +544,23 @@ $.fn.extend({
                         function switchtab() {
                             let activeindex = p.t.tab.default || 1;
                             for (let i = 0; i < ele.children.length; i++) {
-                                // 如果tab的hashpath中不存在 / ，那么只匹配浏览器路径上的前半段路由（渲染第一层tab时）
-                                if (ele.children[i].getAttribute('hashpath').indexOf('/') == -1) {
-                                    let regstr = new RegExp('^'.concat(ele.children[i].getAttribute('hashpath') + '$' || 'undefined$'));
-                                    if (document.location.hash.split('/')[0].match(regstr)) {
-                                        activeindex = i + 1;
-                                        break;
-                                    }
-                                } else {
-                                    // 如果tab的hashpath中存在 / ，那么根据tab的hashpath的长度，拼接浏览器hashpath进行判断（渲染第多层tab时）
-                                    let hashLength = ele.children[i].getAttribute('hashpath').split('/').length;
-                                    let regstr = new RegExp('^'.concat(ele.children[i].getAttribute('hashpath') + '$' || 'undefined$'));
-                                    let locationHash = document.location.hash.split('/').slice(0, hashLength).join('/');
-                                    if (locationHash.match(regstr)) {
-                                        activeindex = i + 1;
-                                        break;
+                                if (ele.children[i].getAttribute('hashpath')) {
+                                    // 如果tab的hashpath中不存在 / ，那么只匹配浏览器路径上的前半段路由（渲染第一层tab时）
+                                    if (ele.children[i].getAttribute('hashpath').indexOf('/') == -1) {
+                                        let regstr = new RegExp('^'.concat(ele.children[i].getAttribute('hashpath') + '$' || 'undefined$'));
+                                        if (document.location.hash.split('/')[0].match(regstr)) {
+                                            activeindex = i + 1;
+                                            break;
+                                        }
+                                    } else {
+                                        // 如果tab的hashpath中存在 / ，那么根据tab的hashpath的长度，拼接浏览器hashpath进行判断（渲染第多层tab时）
+                                        let hashLength = ele.children[i].getAttribute('hashpath').split('/').length;
+                                        let regstr = new RegExp('^'.concat(ele.children[i].getAttribute('hashpath') + '$' || 'undefined$'));
+                                        let locationHash = document.location.hash.split('/').slice(0, hashLength).join('/');
+                                        if (locationHash.match(regstr)) {
+                                            activeindex = i + 1;
+                                            break;
+                                        }
                                     }
                                 }
                             }
