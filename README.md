@@ -362,6 +362,10 @@ $(selector).render({
 
 event : 添加事件侦听器
 
+event传入的值为对象，格式为  事件名：处理函数
+
+<font color=FF000>2021-03-08更新：event支持传入数组对象的形式。[{事件名1: 处理函数1}, {事件名2: 处理函数2}]</font>
+
 ```js
 var data = {
     name: 'wanfang',
@@ -437,7 +441,22 @@ $(selector).render({
                     mouseover: function (param) {
                         console.log(param);
                     }
-                }
+                },
+                // event: [
+                //     {
+                //         dbclick: function (param) {
+                //             console.log(param);
+                //         },
+                //         mouseover: function (param) {
+                //             console.log(param);
+                //         }
+                //     },
+                //     {
+                //         mouseout: function (param) {
+                //             console.log(param);
+                //         }
+                //     }
+                // ]
             }
         ]
     }
