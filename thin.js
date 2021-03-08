@@ -744,13 +744,24 @@ $.fn.extend({
                             }
                         }
 
-                        // click 绑定click用户事件处理函数
-
-                        if (p.t.click !== undefined) {
-                            $(element).on('click', function (e) {
-                                // console.log(e);
-                                eventprocessor(e, p.t.click);
-                            });
+                        //  event 绑定事件侦听器
+                        // 2021-03-08修改event支持对象数组类型
+                        if (p.t.event !== undefined) {
+                            if (Array.isArray(p.t.event)) {
+                                $.each(p.t.event, function (i, ele) {
+                                    Object.keys(ele).forEach(function (key) {
+                                        $(element).on(key, function (e) {
+                                            eventprocessor(e, ele[key]);
+                                        });
+                                    });
+                                });
+                            } else {
+                                Object.keys(p.t.event).forEach(function (key) {
+                                    $(element).on(key, function (e) {
+                                        eventprocessor(e, p.t.event[key]);
+                                    });
+                                });
+                            }
                         }
 
                         //  event 绑定事件侦听器
